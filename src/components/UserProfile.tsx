@@ -1,4 +1,4 @@
-import { ExternalLink, MapPin, Building, Users } from 'lucide-react';
+import { ExternalLink, MapPin, Building, Users, Mail, Globe, Twitter, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { GitHubUser } from '@/utils/api';
@@ -35,7 +35,13 @@ export function UserProfile({ user }: UserProfileProps) {
             </h3>
             <p className="text-sm text-muted-foreground">@{user.login}</p>
             
-            <div className="flex flex-wrap gap-4 mt-2 text-sm text-muted-foreground">
+            {user.bio && (
+              <p className="text-sm text-foreground mt-2 leading-relaxed">
+                {user.bio}
+              </p>
+            )}
+            
+            <div className="flex flex-wrap gap-4 mt-3 text-sm text-muted-foreground">
               {user.location && (
                 <div className="flex items-center gap-1">
                   <MapPin className="h-3 w-3" />
@@ -52,7 +58,47 @@ export function UserProfile({ user }: UserProfileProps) {
                 <Users className="h-3 w-3" />
                 <span>{user.followers} followers</span>
               </div>
+              <div className="flex items-center gap-1">
+                <BookOpen className="h-3 w-3" />
+                <span>{user.public_repos} repos</span>
+              </div>
             </div>
+            
+            {(user.email || user.blog || user.twitter_username) && (
+              <div className="flex flex-wrap gap-3 mt-3">
+                {user.email && (
+                  <a
+                    href={`mailto:${user.email}`}
+                    className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Mail className="h-3 w-3" />
+                    <span>{user.email}</span>
+                  </a>
+                )}
+                {user.blog && (
+                  <a
+                    href={user.blog.startsWith('http') ? user.blog : `https://${user.blog}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Globe className="h-3 w-3" />
+                    <span>{user.blog}</span>
+                  </a>
+                )}
+                {user.twitter_username && (
+                  <a
+                    href={`https://twitter.com/${user.twitter_username}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Twitter className="h-3 w-3" />
+                    <span>@{user.twitter_username}</span>
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

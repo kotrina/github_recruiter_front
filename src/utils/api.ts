@@ -21,11 +21,16 @@ export interface GitHubUser {
   avatar_url: string;
   name: string;
   login: string;
+  bio: string;
   location: string;
   company: string;
   followers: number;
+  public_repos: number;
   created_at: string;
   html_url: string;
+  email: string;
+  blog: string;
+  twitter_username: string;
 }
 
 export interface Repository {
