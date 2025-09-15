@@ -12,6 +12,8 @@ export function Header({ onConfigOpen, currentUsername }: HeaderProps) {
   const { toast } = useToast();
 
   const handleShare = async () => {
+    console.log('Share button clicked, currentUsername:', currentUsername);
+    
     if (!currentUsername) {
       toast({
         title: "No profile to share",
