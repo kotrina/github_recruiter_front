@@ -1,6 +1,6 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LanguageData, LanguagesResponse } from '@/utils/api';
+import { LanguagesResponse } from '@/utils/api';
 
 interface LanguageChartProps {
   data: LanguagesResponse;
@@ -33,6 +33,9 @@ const LANGUAGE_COLORS: Record<string, string> = {
   Clojure: '#db5855',
   Elixir: '#6e4a7e',
   Erlang: '#B83998',
+  Assembly: '#6E4C13',
+  Makefile: '#427819',
+  Roff: '#ecdebe',
 };
 
 const getLanguageColor = (language: string, index: number): string => {
@@ -49,9 +52,9 @@ const getLanguageColor = (language: string, index: number): string => {
 };
 
 export function LanguageChart({ data }: LanguageChartProps) {
-  const { languages, total_bytes, repo_count, skipped_forks, skipped_archived, skipped_old } = data;
+  const { languages, total_bytes, analyzed_repos, params } = data;
 
-  if (total_bytes === 0) {
+  if (total_bytes === 0 || !languages || languages.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -67,11 +70,11 @@ export function LanguageChart({ data }: LanguageChartProps) {
   }
 
   // Convert to chart data with percentages
-  const chartData = Object.entries(languages)
-    .map(([language, bytes]) => ({
-      name: language,
-      value: bytes,
-      percentage: ((bytes / total_bytes) * 100).toFixed(1),
+  const chartData = languages
+    .map((language) => ({
+      name: language.name,
+      value: language.bytes,
+      percentage: language.percent.toFixed(1),
     }))
     .sort((a, b) => b.value - a.value);
 
@@ -150,13 +153,12 @@ export function LanguageChart({ data }: LanguageChartProps) {
 
         <div className="mt-6 pt-4 border-t text-xs text-muted-foreground">
           <p>
-            Analyzed repositories: {repo_count}
-            {(skipped_forks > 0 || skipped_archived > 0 || skipped_old > 0) && (
-              <span> • Skipped: {[
-                skipped_forks > 0 && `${skipped_forks} forks`,
-                skipped_archived > 0 && `${skipped_archived} archived`,
-                skipped_old > 0 && `${skipped_old} old`
-              ].filter(Boolean).join(', ')}</span>
+            Analyzed repositories: {analyzed_repos?.length || 0}
+            {analyzed_repos && analyzed_repos.length > 0 && (
+              <span className="block mt-1">
+                Latest: {analyzed_repos.slice(0, 3).map(repo => repo.split('/')[1]).join(', ')}
+                {analyzed_repos.length > 3 && ` +${analyzed_repos.length - 3} more`}
+              </span>
             )}
           </p>
         </div>

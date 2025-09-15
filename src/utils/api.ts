@@ -43,20 +43,26 @@ export interface AnalyzeResponse {
   repos: Repository[];
 }
 
-export interface LanguageData {
-  [language: string]: number;
+export interface LanguageItem {
+  name: string;
+  bytes: number;
+  percent: number;
 }
 
 export interface LanguagesResponse {
-  languages: LanguageData;
+  username: string;
+  analyzed_repos: string[];
   total_bytes: number;
-  repo_count: number;
-  skipped_forks: number;
-  skipped_archived: number;
-  skipped_old: number;
+  languages: LanguageItem[];
+  percentages: { [key: string]: number };
+  params: {
+    repo_limit: number;
+    include_forks: boolean;
+    include_archived: boolean;
+    recent_months: number;
+  };
 }
 
-// Error types
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -87,6 +93,21 @@ export async function fetchJson<T>(url: string): Promise<T> {
       if (response.status === 403) {
         throw new ApiError('API rate limit reached. Try again later.', 403, 'RATE_LIMIT');
       }
+      if (response.status === 422) {
+        // Handle validation errors from the API
+        try {
+          const errorData = await response.json();
+          if (errorData.detail && Array.isArray(errorData.detail)) {
+            const firstError = errorData.detail[0];
+            if (firstError.msg) {
+              throw new ApiError(`API validation error: ${firstError.msg}`, 422, 'VALIDATION_ERROR');
+            }
+          }
+        } catch (jsonError) {
+          // If we can't parse the error, fall back to generic message
+        }
+        throw new ApiError('Invalid parameters sent to API. Please check your settings.', 422, 'VALIDATION_ERROR');
+      }
       throw new ApiError('Something went wrong while fetching data.', response.status);
     }
 
@@ -111,7 +132,7 @@ export const analyzeProfile = async (
   username: string, 
   options: { reposLimit?: number } = {}
 ): Promise<AnalyzeResponse> => {
-  const reposLimit = options.reposLimit || 5;
+  const reposLimit = Math.min(20, options.reposLimit || 5); // Asegurar máximo de 20
   const url = `${API_CONFIG.baseUrl}/analyze?username=${encodeURIComponent(username)}&repos_limit=${reposLimit}`;
   return fetchJson<AnalyzeResponse>(url);
 };
@@ -127,7 +148,7 @@ export const getLanguages = async (
 ): Promise<LanguagesResponse> => {
   const params = new URLSearchParams({
     username: username,
-    repo_limit: (options.repoLimit || 30).toString(),
+    repo_limit: Math.min(20, options.repoLimit || 20).toString(), // Cambiar el valor por defecto de 30 a 20
     recent_months: (options.recentMonths || 12).toString(),
     include_forks: (options.includeForks || false).toString(),
     include_archived: (options.includeArchived || false).toString(),

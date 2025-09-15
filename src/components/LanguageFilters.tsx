@@ -48,10 +48,10 @@ export function LanguageFilters({ filters, onFiltersChange, isLoading }: Languag
               id="repo-limit"
               type="number"
               min="1"
-              max="100"
+              max="20"
               value={filters.repoLimit}
               onChange={(e) => {
-                const value = Math.min(100, Math.max(1, parseInt(e.target.value) || 1));
+                const value = Math.min(20, Math.max(1, parseInt(e.target.value) || 1));
                 updateFilter('repoLimit', value);
               }}
               disabled={isLoading}
