@@ -32,16 +32,16 @@ export function LanguageFilters({ filters, onFiltersChange, isLoading }: Languag
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg flex items-center gap-2">
+      <CardHeader className="pb-2 pt-4">
+        <CardTitle className="text-base flex items-center gap-2">
           Analysis Filters
-          <span className="text-sm font-normal text-muted-foreground">
+          <span className="text-xs font-normal text-muted-foreground">
             (Affects both repository list and language analysis)
           </span>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <CardContent className="pt-0 pb-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div className="space-y-2">
             <Label htmlFor="repo-limit">Repository limit</Label>
             <Input
@@ -79,7 +79,7 @@ export function LanguageFilters({ filters, onFiltersChange, isLoading }: Languag
             </Select>
           </div>
 
-          <div className="flex items-center space-x-2 pt-6">
+          <div className="flex items-center space-x-2 pt-4">
             <Switch
               id="include-forks"
               checked={filters.includeForks}
@@ -91,7 +91,7 @@ export function LanguageFilters({ filters, onFiltersChange, isLoading }: Languag
             </Label>
           </div>
 
-          <div className="flex items-center space-x-2 pt-6">
+          <div className="flex items-center space-x-2 pt-4">
             <Switch
               id="include-archived"
               checked={filters.includeArchived}
