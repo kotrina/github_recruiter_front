@@ -48,17 +48,15 @@ export function Header({ onConfigOpen, currentUsername }: HeaderProps) {
         </div>
         
         <div className="flex items-center gap-2">
-          {currentUsername && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleShare}
-              className="h-9 px-3"
-            >
-              <Share className="h-[1.2rem] w-[1.2rem] mr-2" />
-              Share
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleShare}
+            className="h-9 px-3"
+          >
+            <Share className="h-[1.2rem] w-[1.2rem] mr-2" />
+            Share
+          </Button>
           <Button
             variant="ghost"
             size="sm"
