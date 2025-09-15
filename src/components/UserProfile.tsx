@@ -1,0 +1,78 @@
+import { ExternalLink, MapPin, Building, Users } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { GitHubUser } from '@/utils/api';
+import { formatDistanceToNow } from 'date-fns';
+
+interface UserProfileProps {
+  user: GitHubUser;
+}
+
+export function UserProfile({ user }: UserProfileProps) {
+  const memberSince = new Date(user.created_at);
+  const avatarUrl = `${user.html_url}.png`;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <span>Candidate Summary</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-start gap-4">
+          <img
+            src={avatarUrl}
+            alt={`${user.name || user.login}'s avatar`}
+            className="h-16 w-16 rounded-full border-2 border-border"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = `https://github.com/identicons/${user.login}.png`;
+            }}
+          />
+          <div className="flex-1 min-w-0">
+            <h3 className="text-lg font-semibold text-foreground">
+              {user.name || user.login}
+            </h3>
+            <p className="text-sm text-muted-foreground">@{user.login}</p>
+            
+            <div className="flex flex-wrap gap-4 mt-2 text-sm text-muted-foreground">
+              {user.location && (
+                <div className="flex items-center gap-1">
+                  <MapPin className="h-3 w-3" />
+                  <span>{user.location}</span>
+                </div>
+              )}
+              {user.company && (
+                <div className="flex items-center gap-1">
+                  <Building className="h-3 w-3" />
+                  <span>{user.company}</span>
+                </div>
+              )}
+              <div className="flex items-center gap-1">
+                <Users className="h-3 w-3" />
+                <span>{user.followers} followers</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-2 border-t space-y-2">
+          <p className="text-sm text-muted-foreground">
+            Member since {formatDistanceToNow(memberSince, { addSuffix: true })}
+          </p>
+          <Button asChild variant="outline" className="w-full">
+            <a
+              href={user.html_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <ExternalLink className="h-4 w-4" />
+              View on GitHub
+            </a>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
