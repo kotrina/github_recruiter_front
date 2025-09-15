@@ -1,6 +1,8 @@
-import { Star, GitFork, ExternalLink } from 'lucide-react';
+import { Star, GitFork, ExternalLink, Info } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Repository } from '@/utils/api';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -12,7 +14,19 @@ export function RepositoryList({ repositories }: RepositoryListProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Top Repositories</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <span>Top Repositories</span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-5 w-5 text-muted-foreground hover:text-foreground">
+                <Info className="h-3 w-3" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="max-w-xs">Most popular public repositories ordered by stars and activity. Shows the developer's main projects and areas of expertise.</p>
+            </TooltipContent>
+          </Tooltip>
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {repositories.map((repo) => (

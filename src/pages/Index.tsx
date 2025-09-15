@@ -47,19 +47,28 @@ const Index = () => {
     repoLimit: 20, // Cambiar de 30 a 20 (máximo permitido por la API)
   });
 
-  // Load initial data
+  // Load initial data and handle shared URLs
   useEffect(() => {
     loadApiConfig();
     setRecentSearches(getRecentSearches());
+    
+    // Handle shared profile URLs
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedUsername = urlParams.get('u');
+    if (sharedUsername) {
+      setCurrentUsername(sharedUsername);
+      addRecentSearch(sharedUsername);
+      setRecentSearches(getRecentSearches());
+    }
   }, []);
 
-  // Fetch both analyze and language data when filters change
+  // Fetch both analyze and language data when filters change or initial load from URL
   useEffect(() => {
     if (currentUsername) {
       fetchAnalyze(currentUsername);
       fetchLanguages(currentUsername);
     }
-  }, [filters]);
+  }, [filters, currentUsername]);
 
   const resetResults = () => {
     setSearchResults({
@@ -141,7 +150,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header onConfigOpen={() => setConfigOpen(true)} />
+      <Header onConfigOpen={() => setConfigOpen(true)} currentUsername={currentUsername} />
       
       <main>
         <SearchSection 

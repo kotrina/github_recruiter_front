@@ -1,5 +1,8 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { Info } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tooltip as UITooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { LanguagesResponse } from '@/utils/api';
 
 interface LanguageChartProps {
@@ -58,7 +61,19 @@ export function LanguageChart({ data }: LanguageChartProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Language Mix (%)</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <span>Language Mix (%)</span>
+            <UITooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-5 w-5 text-muted-foreground hover:text-foreground">
+                  <Info className="h-3 w-3" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="max-w-xs">Programming language distribution based on code bytes in repositories. Helps assess technical skills and experience areas.</p>
+              </TooltipContent>
+            </UITooltip>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-muted-foreground">
@@ -102,10 +117,22 @@ export function LanguageChart({ data }: LanguageChartProps) {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Language Mix (%)</CardTitle>
-      </CardHeader>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <span>Language Mix (%)</span>
+            <UITooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-5 w-5 text-muted-foreground hover:text-foreground">
+                  <Info className="h-3 w-3" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="max-w-xs">Programming language distribution based on code bytes in repositories. Helps assess technical skills and experience areas.</p>
+              </TooltipContent>
+            </UITooltip>
+          </CardTitle>
+        </CardHeader>
       <CardContent>
         <div className="h-64 mb-6">
           <ResponsiveContainer width="100%" height="100%">

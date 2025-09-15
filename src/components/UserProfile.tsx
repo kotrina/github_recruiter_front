@@ -1,6 +1,7 @@
-import { ExternalLink, MapPin, Building, Users, Mail, Globe, Twitter, BookOpen } from 'lucide-react';
+import { ExternalLink, MapPin, Building, Users, Mail, Globe, Twitter, BookOpen, Info } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { GitHubUser } from '@/utils/api';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -17,6 +18,16 @@ export function UserProfile({ user }: UserProfileProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <span>Candidate Summary</span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-5 w-5 text-muted-foreground hover:text-foreground">
+                <Info className="h-3 w-3" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="max-w-xs">Overview of the developer's public GitHub profile including basic information, contact details, followers, and repository count.</p>
+            </TooltipContent>
+          </Tooltip>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
