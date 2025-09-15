@@ -31,32 +31,17 @@ export function LanguageFilters({ filters, onFiltersChange, isLoading }: Languag
   ];
 
   return (
-    <Card className="mb-4">
+    <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Filters</CardTitle>
+        <CardTitle className="text-lg flex items-center gap-2">
+          Analysis Filters
+          <span className="text-sm font-normal text-muted-foreground">
+            (Affects both repository list and language analysis)
+          </span>
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="recent-months">Recent months</Label>
-            <Select
-              value={filters.recentMonths.toString()}
-              onValueChange={(value) => updateFilter('recentMonths', parseInt(value))}
-              disabled={isLoading}
-            >
-              <SelectTrigger id="recent-months">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {recentMonthsOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value.toString()}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="space-y-2">
             <Label htmlFor="repo-limit">Repository limit</Label>
             <Input
@@ -70,10 +55,31 @@ export function LanguageFilters({ filters, onFiltersChange, isLoading }: Languag
                 updateFilter('repoLimit', value);
               }}
               disabled={isLoading}
+              className="h-9"
             />
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="space-y-2">
+            <Label htmlFor="recent-months">Time period</Label>
+            <Select
+              value={filters.recentMonths.toString()}
+              onValueChange={(value) => updateFilter('recentMonths', parseInt(value))}
+              disabled={isLoading}
+            >
+              <SelectTrigger id="recent-months" className="h-9">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {recentMonthsOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value.toString()}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center space-x-2 pt-6">
             <Switch
               id="include-forks"
               checked={filters.includeForks}
@@ -85,7 +91,7 @@ export function LanguageFilters({ filters, onFiltersChange, isLoading }: Languag
             </Label>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 pt-6">
             <Switch
               id="include-archived"
               checked={filters.includeArchived}

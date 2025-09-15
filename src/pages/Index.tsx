@@ -53,9 +53,10 @@ const Index = () => {
     setRecentSearches(getRecentSearches());
   }, []);
 
-  // Fetch language data when filters change
+  // Fetch both analyze and language data when filters change
   useEffect(() => {
     if (currentUsername) {
+      fetchAnalyze(currentUsername);
       fetchLanguages(currentUsername);
     }
   }, [filters]);
@@ -75,7 +76,7 @@ const Index = () => {
     }));
 
     try {
-      const data = await analyzeProfile(username);
+      const data = await analyzeProfile(username, { reposLimit: filters.repoLimit });
       setSearchResults(prev => ({
         ...prev,
         analyze: { data, loading: false, error: null }
@@ -149,6 +150,17 @@ const Index = () => {
           recentSearches={recentSearches}
         />
 
+        {/* Filters Section - Always Visible */}
+        <section className="py-4 px-4 bg-surface/50">
+          <div className="container mx-auto max-w-7xl">
+            <LanguageFilters
+              filters={filters}
+              onFiltersChange={setFilters}
+              isLoading={isLoading}
+            />
+          </div>
+        </section>
+
         {hasResults && (
           <section className="py-8 px-4">
             <div className="container mx-auto max-w-7xl">
@@ -177,12 +189,6 @@ const Index = () => {
 
                 {/* Right Column - Language Analysis */}
                 <div className="space-y-6">
-                  <LanguageFilters
-                    filters={filters}
-                    onFiltersChange={setFilters}
-                    isLoading={searchResults.languages.loading}
-                  />
-
                   {searchResults.languages.loading && (
                     <LoadingCard title="Language Mix (%)" type="chart" />
                   )}

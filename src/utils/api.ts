@@ -107,8 +107,12 @@ export async function fetchJson<T>(url: string): Promise<T> {
 }
 
 // API functions
-export const analyzeProfile = async (username: string): Promise<AnalyzeResponse> => {
-  const url = `${API_CONFIG.baseUrl}/analyze?username=${encodeURIComponent(username)}&repos_limit=5`;
+export const analyzeProfile = async (
+  username: string, 
+  options: { reposLimit?: number } = {}
+): Promise<AnalyzeResponse> => {
+  const reposLimit = options.reposLimit || 5;
+  const url = `${API_CONFIG.baseUrl}/analyze?username=${encodeURIComponent(username)}&repos_limit=${reposLimit}`;
   return fetchJson<AnalyzeResponse>(url);
 };
 
