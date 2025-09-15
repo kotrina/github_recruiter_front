@@ -133,7 +133,8 @@ export const analyzeProfile = async (
   options: { reposLimit?: number } = {}
 ): Promise<AnalyzeResponse> => {
   const reposLimit = Math.min(20, options.reposLimit || 5); // Asegurar máximo de 20
-  const url = `${API_CONFIG.baseUrl}/analyze?username=${encodeURIComponent(username)}&repos_limit=${reposLimit}`;
+  const baseUrl = API_CONFIG.baseUrl.endsWith('/') ? API_CONFIG.baseUrl.slice(0, -1) : API_CONFIG.baseUrl;
+  const url = `${baseUrl}/analyze?username=${encodeURIComponent(username)}&repos_limit=${reposLimit}`;
   return fetchJson<AnalyzeResponse>(url);
 };
 
@@ -154,7 +155,8 @@ export const getLanguages = async (
     include_archived: (options.includeArchived || false).toString(),
   });
 
-  const url = `${API_CONFIG.baseUrl}/languages?${params.toString()}`;
+  const baseUrl = API_CONFIG.baseUrl.endsWith('/') ? API_CONFIG.baseUrl.slice(0, -1) : API_CONFIG.baseUrl;
+  const url = `${baseUrl}/languages?${params.toString()}`;
   return fetchJson<LanguagesResponse>(url);
 };
 
