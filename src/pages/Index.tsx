@@ -75,7 +75,6 @@ const Index = () => {
       analyze: { data: null, loading: false, error: null },
       languages: { data: null, loading: false, error: null },
     });
-    setCurrentUsername('');
   };
 
   const fetchAnalyze = async (username: string) => {

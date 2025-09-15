@@ -12,8 +12,6 @@ export function Header({ onConfigOpen, currentUsername }: HeaderProps) {
   const { toast } = useToast();
 
   const handleShare = async () => {
-    console.log('Share button clicked, currentUsername:', currentUsername);
-    
     if (!currentUsername) {
       toast({
         title: "No profile to share",
@@ -35,7 +33,7 @@ export function Header({ onConfigOpen, currentUsername }: HeaderProps) {
       toast({
         title: "Copy failed",
         description: "Could not copy link to clipboard.",
-        variant: "destructive",
+        variant:  "destructive",
       });
     }
   };
