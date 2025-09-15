@@ -42,11 +42,11 @@ export function RepositoryList({ repositories }: RepositoryListProps) {
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Star className="h-3 w-3 fill-github-orange text-github-orange" />
-                  <span>{repo.stargazers_count.toLocaleString()}</span>
+                  <span>{(repo.stargazers_count || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <GitFork className="h-3 w-3" />
-                  <span>{repo.forks_count.toLocaleString()}</span>
+                  <span>{(repo.forks_count || 0).toLocaleString()}</span>
                 </div>
                 {repo.language && (
                   <Badge variant="secondary" className="text-xs">
