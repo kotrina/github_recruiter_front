@@ -68,6 +68,69 @@ export interface LanguagesResponse {
   };
 }
 
+export interface CommunityRepository {
+  name: string;
+  html_url: string;
+  stargazers_count: number;
+  forks_count: number;
+  watchers_count: number;
+  language: string;
+  pushed_at: string;
+  description: string;
+  community_score: number;
+  traffic_light: 'green' | 'yellow' | 'red';
+  traffic_reason: string;
+  breakdown: {
+    governance_0_90: number;
+    governance_scaled_0_30: number;
+    popularity_0_70: number;
+  };
+  popularity_meta: {
+    inputs: {
+      stars: number;
+      forks: number;
+      watchers: number;
+    };
+    targets: {
+      stars: number;
+      forks: number;
+      watchers: number;
+    };
+    weights: {
+      stars: number;
+      forks: number;
+      watchers: number;
+    };
+    parts: {
+      stars: number;
+      forks: number;
+      watchers: number;
+    };
+  };
+  checks: {
+    readme: boolean;
+    license_like: boolean;
+    contributing: boolean;
+    maintainers: boolean;
+    issue_template: boolean;
+    pull_request_template: boolean;
+    security_policy_like: boolean;
+    docs_folder: boolean;
+  };
+}
+
+export interface CommunityResponse {
+  username: string;
+  analyzed_repos: string[];
+  repositories: CommunityRepository[];
+  params: {
+    repo_limit: number;
+    include_forks: boolean;
+    include_archived: boolean;
+    recent_months: number;
+  };
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -163,6 +226,28 @@ export const getLanguages = async (
   const baseUrl = API_CONFIG.baseUrl.endsWith('/') ? API_CONFIG.baseUrl.slice(0, -1) : API_CONFIG.baseUrl;
   const url = `${baseUrl}/languages?${params.toString()}`;
   return fetchJson<LanguagesResponse>(url);
+};
+
+export const getCommunity = async (
+  username: string,
+  options: {
+    repoLimit?: number;
+    recentMonths?: number;
+    includeForks?: boolean;
+    includeArchived?: boolean;
+  } = {}
+): Promise<CommunityResponse> => {
+  const params = new URLSearchParams({
+    username: username,
+    repo_limit: Math.min(100, options.repoLimit || 10).toString(),
+    recent_months: (options.recentMonths || 12).toString(),
+    include_forks: (options.includeForks || false).toString(),
+    include_archived: (options.includeArchived || false).toString(),
+  });
+
+  const baseUrl = API_CONFIG.baseUrl.endsWith('/') ? API_CONFIG.baseUrl.slice(0, -1) : API_CONFIG.baseUrl;
+  const url = `${baseUrl}/community?${params.toString()}`;
+  return fetchJson<CommunityResponse>(url);
 };
 
 // Local storage helpers

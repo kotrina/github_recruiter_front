@@ -5,17 +5,20 @@ import { UserProfile } from '@/components/UserProfile';
 import { RepositoryList } from '@/components/RepositoryList';
 import { LanguageChart } from '@/components/LanguageChart';
 import { LanguageFilters, FilterOptions } from '@/components/LanguageFilters';
+import { CommunitySection } from '@/components/CommunitySection';
 import { ConfigPanel } from '@/components/ConfigPanel';
 import { ErrorCard } from '@/components/ErrorCard';
 import { LoadingCard } from '@/components/LoadingCard';
 import {
   analyzeProfile,
   getLanguages,
+  getCommunity,
   addRecentSearch,
   getRecentSearches,
   loadApiConfig,
   AnalyzeResponse,
   LanguagesResponse,
+  CommunityResponse,
   ApiError,
 } from '@/utils/api';
 
@@ -30,6 +33,11 @@ interface SearchResults {
     loading: boolean;
     error: Error | null;
   };
+  community: {
+    data: CommunityResponse | null;
+    loading: boolean;
+    error: Error | null;
+  };
 }
 
 const Index = () => {
@@ -38,6 +46,7 @@ const Index = () => {
   const [searchResults, setSearchResults] = useState<SearchResults>({
     analyze: { data: null, loading: false, error: null },
     languages: { data: null, loading: false, error: null },
+    community: { data: null, loading: false, error: null },
   });
   const [currentUsername, setCurrentUsername] = useState<string>('');
   const [filters, setFilters] = useState<FilterOptions>({
@@ -62,11 +71,12 @@ const Index = () => {
     }
   }, []);
 
-  // Fetch both analyze and language data when filters change or initial load from URL
+  // Fetch all data when filters change or initial load from URL
   useEffect(() => {
     if (currentUsername) {
       fetchAnalyze(currentUsername);
       fetchLanguages(currentUsername);
+      fetchCommunity(currentUsername);
     }
   }, [filters, currentUsername]);
 
@@ -74,6 +84,7 @@ const Index = () => {
     setSearchResults({
       analyze: { data: null, loading: false, error: null },
       languages: { data: null, loading: false, error: null },
+      community: { data: null, loading: false, error: null },
     });
   };
 
@@ -125,10 +136,11 @@ const Index = () => {
     // Reset results
     resetResults();
 
-    // Fetch both analyze and languages data in parallel
+    // Fetch all data in parallel
     await Promise.all([
       fetchAnalyze(username),
       fetchLanguages(username),
+      fetchCommunity(username),
     ]);
   };
 
@@ -144,8 +156,34 @@ const Index = () => {
     }
   };
 
-  const isLoading = searchResults.analyze.loading || searchResults.languages.loading;
-  const hasResults = searchResults.analyze.data || searchResults.languages.data;
+  const fetchCommunity = async (username: string) => {
+    setSearchResults(prev => ({
+      ...prev,
+      community: { data: null, loading: true, error: null }
+    }));
+
+    try {
+      const data = await getCommunity(username, filters);
+      setSearchResults(prev => ({
+        ...prev,
+        community: { data, loading: false, error: null }
+      }));
+    } catch (error) {
+      setSearchResults(prev => ({
+        ...prev,
+        community: { data: null, loading: false, error: error as Error }
+      }));
+    }
+  };
+
+  const handleRetryCommunity = () => {
+    if (currentUsername) {
+      fetchCommunity(currentUsername);
+    }
+  };
+
+  const isLoading = searchResults.analyze.loading || searchResults.languages.loading || searchResults.community.loading;
+  const hasResults = searchResults.analyze.data || searchResults.languages.data || searchResults.community.data;
 
   return (
     <div className="min-h-screen bg-background">
@@ -216,6 +254,31 @@ const Index = () => {
               </div>
             </div>
           </section>
+        )}
+
+        {/* Community Section - Full Width */}
+        {searchResults.community.loading && (
+          <section className="py-8 px-4 border-t border-border">
+            <div className="container mx-auto max-w-7xl">
+              <LoadingCard title="Community (OSS Health)" type="chart" />
+            </div>
+          </section>
+        )}
+        
+        {searchResults.community.error && (
+          <section className="py-8 px-4 border-t border-border">
+            <div className="container mx-auto max-w-7xl">
+              <ErrorCard 
+                error={searchResults.community.error}
+                title="Failed to load community data"
+                onRetry={handleRetryCommunity}
+              />
+            </div>
+          </section>
+        )}
+        
+        {searchResults.community.data && (
+          <CommunitySection data={searchResults.community.data} />
         )}
       </main>
 
