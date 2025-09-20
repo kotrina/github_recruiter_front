@@ -44,7 +44,7 @@ export function CommunitySection({ data }: CommunitySectionProps) {
       case 'score':
         return sorted.sort((a, b) => (b.community_score || 0) - (a.community_score || 0));
       case 'stars':
-        return sorted.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
+        return sorted.sort((a, b) => (b.stars || 0) - (a.stars || 0));
       case 'updated':
         return sorted.sort((a, b) => 
           new Date(b.pushed_at || 0).getTime() - new Date(a.pushed_at || 0).getTime()
@@ -54,7 +54,7 @@ export function CommunitySection({ data }: CommunitySectionProps) {
     }
   };
 
-  const sortedRepositories = sortRepositories(data.repositories || []);
+  const sortedRepositories = sortRepositories(data.repos || []);
 
   const InfoTooltip = ({ title, children }: { title: string; children: React.ReactNode }) => (
     <TooltipProvider>
@@ -116,25 +116,20 @@ export function CommunitySection({ data }: CommunitySectionProps) {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {sortedRepositories.map((repo) => (
-              <Card key={repo.name} className="hover:shadow-md transition-shadow">
+              <Card key={repo.full_name} className="hover:shadow-md transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <CardTitle className="text-base truncate">
                         <a
-                          href={repo.html_url}
+                          href={`https://github.com/${repo.full_name}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-github-blue hover:underline"
                         >
-                          {repo.name}
+                          {repo.full_name.split('/')[1]}
                         </a>
                       </CardTitle>
-                      {repo.description && (
-                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                          {repo.description}
-                        </p>
-                      )}
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <div className={`w-3 h-3 rounded-full ${getTrafficLightColor(repo.traffic_light)}`} />
@@ -150,15 +145,15 @@ export function CommunitySection({ data }: CommunitySectionProps) {
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Star className="h-3 w-3" />
-                      <span>{formatNumber(repo.stargazers_count || 0)}</span>
+                      <span>{formatNumber(repo.stars || 0)}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <GitFork className="h-3 w-3" />
-                      <span>{formatNumber(repo.forks_count || 0)}</span>
+                      <span>{formatNumber(repo.forks || 0)}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Eye className="h-3 w-3" />
-                      <span>{formatNumber(repo.watchers_count || 0)}</span>
+                      <span>{formatNumber(repo.watchers || 0)}</span>
                     </div>
                   </div>
 
@@ -178,9 +173,9 @@ export function CommunitySection({ data }: CommunitySectionProps) {
                       />
                       {repo.popularity_meta && (
                         <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                          <span>★ {Math.round(repo.popularity_meta.parts?.stars || 0)}</span>
-                          <span>⑂ {Math.round(repo.popularity_meta.parts?.forks || 0)}</span>
-                          <span>👁 {Math.round(repo.popularity_meta.parts?.watchers || 0)}</span>
+                          <span>★ {Math.round(repo.popularity_meta.parts?.stars_part || 0)}</span>
+                          <span>⑂ {Math.round(repo.popularity_meta.parts?.forks_part || 0)}</span>
+                          <span>👁 {Math.round(repo.popularity_meta.parts?.watch_part || 0)}</span>
                         </div>
                       )}
                     </div>
@@ -232,7 +227,7 @@ export function CommunitySection({ data }: CommunitySectionProps) {
                       asChild
                     >
                       <a
-                        href={repo.html_url}
+                        href={`https://github.com/${repo.full_name}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >

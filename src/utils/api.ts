@@ -69,14 +69,11 @@ export interface LanguagesResponse {
 }
 
 export interface CommunityRepository {
-  name: string;
-  html_url: string;
-  stargazers_count: number;
-  forks_count: number;
-  watchers_count: number;
-  language: string;
+  full_name: string;
+  stars: number;
+  forks: number;
+  watchers: number;
   pushed_at: string;
-  description: string;
   community_score: number;
   traffic_light: 'green' | 'yellow' | 'red';
   traffic_reason: string;
@@ -102,9 +99,9 @@ export interface CommunityRepository {
       watchers: number;
     };
     parts: {
-      stars: number;
-      forks: number;
-      watchers: number;
+      stars_part: number;
+      forks_part: number;
+      watch_part: number;
     };
   };
   checks: {
@@ -121,8 +118,7 @@ export interface CommunityRepository {
 
 export interface CommunityResponse {
   username: string;
-  analyzed_repos: string[];
-  repositories: CommunityRepository[];
+  repos: CommunityRepository[];
   params: {
     repo_limit: number;
     include_forks: boolean;

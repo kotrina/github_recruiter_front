@@ -165,7 +165,7 @@ const Index = () => {
     try {
       const data = await getCommunity(username, filters);
       console.log('Community API Response:', data);
-      console.log('Community repositories count:', data?.repositories?.length || 0);
+      console.log('Community repositories count:', data?.repos?.length || 0);
       setSearchResults(prev => ({
         ...prev,
         community: { data, loading: false, error: null }
