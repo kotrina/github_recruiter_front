@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { SearchSection } from '@/components/SearchSection';
 import { UserProfile } from '@/components/UserProfile';
-import { RepositoryList } from '@/components/RepositoryList';
 import { LanguageChart } from '@/components/LanguageChart';
 import { LanguageFilters, FilterOptions } from '@/components/LanguageFilters';
 import { CommunitySection } from '@/components/CommunitySection';
@@ -228,10 +227,7 @@ const Index = () => {
                   )}
                   
                   {searchResults.analyze.data && (
-                    <>
-                      <UserProfile user={searchResults.analyze.data.user} />
-                      <RepositoryList repositories={searchResults.analyze.data.repos} />
-                    </>
+                    <UserProfile user={searchResults.analyze.data.user} />
                   )}
                 </div>
 
