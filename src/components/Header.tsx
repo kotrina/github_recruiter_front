@@ -1,4 +1,4 @@
-import { Github, Settings, Share } from 'lucide-react';
+import { Settings, Share } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -41,8 +41,8 @@ export function Header({ onConfigOpen, currentUsername }: HeaderProps) {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <Github className="h-5 w-5 text-primary-foreground" />
+          <div className="flex h-8 w-8 items-center justify-center">
+            <img src="/lovable-uploads/a4e96b70-f092-4308-9382-794770be8b04.png" alt="Hermes Logo" className="h-8 w-8 object-contain" />
           </div>
           <div className="flex flex-col">
             <span className="text-xl font-bold">Hermes</span>
