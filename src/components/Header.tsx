@@ -45,7 +45,7 @@ export function Header({ onConfigOpen, currentUsername }: HeaderProps) {
             <Github className="h-5 w-5 text-primary-foreground" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-bold">Herme</span>
+            <span className="text-xl font-bold">Hermes</span>
             <span className="text-xs text-muted-foreground leading-tight">Github Interpreter</span>
           </div>
         </div>
