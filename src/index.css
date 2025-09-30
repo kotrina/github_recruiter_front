@@ -33,6 +33,10 @@
     --accent: 210 16% 93%;
     --accent-foreground: 215 25% 27%;
 
+    /* Popover and tooltip - solid backgrounds for readability */
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 15% 15%;
+
     /* Status colors */
     --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
@@ -101,6 +105,10 @@
     /* Accent colors */
     --accent: 215 20% 20%;
     --accent-foreground: 210 40% 98%;
+
+    /* Popover and tooltip - solid backgrounds for readability */
+    --popover: 215 25% 11%;
+    --popover-foreground: 210 40% 98%;
 
     /* Status colors */
     --success: 142 71% 55%;
