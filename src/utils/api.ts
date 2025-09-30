@@ -127,6 +127,41 @@ export interface CommunityResponse {
   };
 }
 
+export interface ActivityKPIs {
+  last_active_days_ago: number | null;
+  active_weeks_12w: number;
+  external_ratio_pct: number;
+}
+
+export interface ActivityRole {
+  count: number;
+  pct: number;
+}
+
+export interface ActivityRoles {
+  build: ActivityRole;
+  review: ActivityRole;
+  feedback: ActivityRole;
+}
+
+export interface TopCollaboration {
+  repo: string;
+  prs: number;
+  reviews: number;
+  issues: number;
+  score: number;
+  last: string;
+  html_url: string;
+}
+
+export interface ActivityResponse {
+  username: string;
+  window_days: number;
+  kpis: ActivityKPIs;
+  roles: ActivityRoles;
+  top_collabs: TopCollaboration[];
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -260,4 +295,34 @@ export const addRecentSearch = (username: string) => {
   const recent = getRecentSearches();
   const updated = [username, ...recent.filter(u => u !== username)].slice(0, 5);
   localStorage.setItem('github-interpreter-recent-searches', JSON.stringify(updated));
+};
+
+export const getActivity = async (
+  username: string,
+  options: {
+    days?: number;
+  } = {}
+): Promise<ActivityResponse> => {
+  const params = new URLSearchParams({
+    username: username,
+    days: (options.days || 90).toString(),
+  });
+
+  const baseUrl = API_CONFIG.baseUrl.endsWith('/') ? API_CONFIG.baseUrl.slice(0, -1) : API_CONFIG.baseUrl;
+  const url = `${baseUrl}/activity?${params.toString()}`;
+  return fetchJson<ActivityResponse>(url);
+};
+
+// Activity days persistence
+export const getActivityDays = (): number => {
+  try {
+    const saved = localStorage.getItem('activityDays');
+    return saved ? parseInt(saved, 10) : 90;
+  } catch {
+    return 90;
+  }
+};
+
+export const setActivityDays = (days: number) => {
+  localStorage.setItem('activityDays', days.toString());
 };

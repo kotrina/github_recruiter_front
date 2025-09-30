@@ -12,14 +12,18 @@ import {
   analyzeProfile,
   getLanguages,
   getCommunity,
+  getActivity,
   addRecentSearch,
   getRecentSearches,
   loadApiConfig,
+  getActivityDays,
   AnalyzeResponse,
   LanguagesResponse,
   CommunityResponse,
+  ActivityResponse,
   ApiError,
 } from '@/utils/api';
+import { ActivitySection } from '@/components/ActivitySection';
 
 interface SearchResults {
   analyze: {
@@ -37,6 +41,11 @@ interface SearchResults {
     loading: boolean;
     error: Error | null;
   };
+  activity: {
+    data: ActivityResponse | null;
+    loading: boolean;
+    error: Error | null;
+  };
 }
 
 const Index = () => {
@@ -46,6 +55,7 @@ const Index = () => {
     analyze: { data: null, loading: false, error: null },
     languages: { data: null, loading: false, error: null },
     community: { data: null, loading: false, error: null },
+    activity: { data: null, loading: false, error: null },
   });
   const [currentUsername, setCurrentUsername] = useState<string>('');
   const [filters, setFilters] = useState<FilterOptions>({
@@ -76,6 +86,7 @@ const Index = () => {
       fetchAnalyze(currentUsername);
       fetchLanguages(currentUsername);
       fetchCommunity(currentUsername);
+      fetchActivity(currentUsername);
     }
   }, [filters, currentUsername]);
 
@@ -84,6 +95,7 @@ const Index = () => {
       analyze: { data: null, loading: false, error: null },
       languages: { data: null, loading: false, error: null },
       community: { data: null, loading: false, error: null },
+      activity: { data: null, loading: false, error: null },
     });
   };
 
@@ -140,6 +152,7 @@ const Index = () => {
       fetchAnalyze(username),
       fetchLanguages(username),
       fetchCommunity(username),
+      fetchActivity(username),
     ]);
   };
 
@@ -183,8 +196,40 @@ const Index = () => {
     }
   };
 
-  const isLoading = searchResults.analyze.loading || searchResults.languages.loading || searchResults.community.loading;
-  const hasResults = searchResults.analyze.data || searchResults.languages.data || searchResults.community.data;
+  const fetchActivity = async (username: string, days?: number) => {
+    setSearchResults(prev => ({
+      ...prev,
+      activity: { data: null, loading: true, error: null }
+    }));
+
+    try {
+      const data = await getActivity(username, { days: days || getActivityDays() });
+      setSearchResults(prev => ({
+        ...prev,
+        activity: { data, loading: false, error: null }
+      }));
+    } catch (error) {
+      setSearchResults(prev => ({
+        ...prev,
+        activity: { data: null, loading: false, error: error as Error }
+      }));
+    }
+  };
+
+  const handleRetryActivity = () => {
+    if (currentUsername) {
+      fetchActivity(currentUsername);
+    }
+  };
+
+  const handleActivityDaysChange = (days: number) => {
+    if (currentUsername) {
+      fetchActivity(currentUsername, days);
+    }
+  };
+
+  const isLoading = searchResults.analyze.loading || searchResults.languages.loading || searchResults.community.loading || searchResults.activity.loading;
+  const hasResults = searchResults.analyze.data || searchResults.languages.data || searchResults.community.data || searchResults.activity.data;
 
   return (
     <div className="min-h-screen bg-background">
@@ -277,6 +322,34 @@ const Index = () => {
         
         {searchResults.community.data && (
           <CommunitySection data={searchResults.community.data} />
+        )}
+
+        {/* Activity Section - Full Width */}
+        {searchResults.activity.loading && (
+          <section className="py-8 px-4 border-t border-border">
+            <div className="container mx-auto max-w-7xl">
+              <LoadingCard title="Activity" type="chart" />
+            </div>
+          </section>
+        )}
+        
+        {searchResults.activity.error && (
+          <section className="py-8 px-4 border-t border-border">
+            <div className="container mx-auto max-w-7xl">
+              <ErrorCard 
+                error={searchResults.activity.error}
+                title="Failed to load activity data"
+                onRetry={handleRetryActivity}
+              />
+            </div>
+          </section>
+        )}
+        
+        {searchResults.activity.data && (
+          <ActivitySection 
+            data={searchResults.activity.data}
+            onDaysChange={handleActivityDaysChange}
+          />
         )}
       </main>
 
