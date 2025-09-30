@@ -62,7 +62,7 @@ const Index = () => {
     recentMonths: 12,
     includeForks: false,
     includeArchived: false,
-    repoLimit: 20, // Cambiar de 30 a 20 (máximo permitido por la API)
+    repoLimit: 5,
   });
 
   // Load initial data and handle shared URLs

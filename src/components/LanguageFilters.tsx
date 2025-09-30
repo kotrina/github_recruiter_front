@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
@@ -19,6 +20,8 @@ export function LanguageFilters({
   onFiltersChange,
   isLoading
 }: LanguageFiltersProps) {
+  const [localRepoLimit, setLocalRepoLimit] = useState(filters.repoLimit);
+
   const updateFilter = (key: keyof FilterOptions, value: any) => {
     onFiltersChange({
       ...filters,
@@ -53,10 +56,22 @@ export function LanguageFilters({
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div className="space-y-2">
             <Label htmlFor="repo-limit">Repository limit</Label>
-            <Input id="repo-limit" type="number" min="1" max="20" value={filters.repoLimit} onChange={e => {
-            const value = Math.min(20, Math.max(1, parseInt(e.target.value) || 1));
-            updateFilter('repoLimit', value);
-          }} disabled={isLoading} className="h-9" />
+            <Input 
+              id="repo-limit" 
+              type="number" 
+              min="1" 
+              max="20" 
+              value={localRepoLimit} 
+              onChange={e => {
+                const value = Math.min(20, Math.max(1, parseInt(e.target.value) || 1));
+                setLocalRepoLimit(value);
+              }}
+              onBlur={() => {
+                updateFilter('repoLimit', localRepoLimit);
+              }}
+              disabled={isLoading} 
+              className="h-9" 
+            />
           </div>
 
           <div className="space-y-2">
