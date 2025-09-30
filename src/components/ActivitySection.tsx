@@ -35,7 +35,7 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
     }
   };
 
-  const totalEvents = data.roles.build.count + data.roles.review.count + data.roles.feedback.count;
+  const rolesTotal = data.roles.roles_total;
 
   return (
     <section className="py-8 px-4 border-t border-border">
@@ -52,13 +52,14 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
                     </TooltipTrigger>
                     <TooltipContent className="max-w-sm">
                       <p className="text-sm">
-                        Recent public GitHub activity. We group events into three roles:
+                        We group public GitHub events into collaboration roles:
                         <br />
                         <strong>Build</strong> (pushes & pull requests),{' '}
                         <strong>Review</strong> (PR reviews & comments on PRs),{' '}
                         <strong>Feedback</strong> (issues & comments on issues).
                         <br />
-                        External ratio shows how much of the activity happens outside the candidate's own repositories.
+                        The chips below show other activity: <strong>Explore</strong> (stars & forks),{' '}
+                        <strong>Release</strong> (releases & tags), and <strong>Admin</strong> (maintenance/meta actions).
                       </p>
                     </TooltipContent>
                   </Tooltip>
@@ -98,7 +99,7 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
                           <Info className="h-3 w-3 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p className="text-xs">Time since the most recent public event</p>
+                          <p className="text-xs">Time since the most recent public event in the selected window</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -156,9 +157,9 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
             <div className="space-y-3">
               <h3 className="text-sm font-medium">Activity by Role</h3>
               
-              {totalEvents === 0 ? (
+              {rolesTotal === 0 ? (
                 <div className="text-sm text-muted-foreground py-8 text-center border rounded-md">
-                  No public activity in the selected window.
+                  No code-collaboration activity in the selected window.
                 </div>
               ) : (
                 <>
@@ -231,6 +232,33 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
                   </div>
                 </>
               )}
+            </div>
+
+            {/* Other Activity */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium">Other Activity</h3>
+              <div className="flex gap-3 flex-wrap">
+                {data.all_categories.explore.count > 0 && (
+                  <Badge variant="outline" className="text-sm">
+                    Explore {data.all_categories.explore.pct_total.toFixed(1)}%
+                  </Badge>
+                )}
+                {data.all_categories.release.count > 0 && (
+                  <Badge variant="outline" className="text-sm">
+                    Release {data.all_categories.release.pct_total.toFixed(1)}%
+                  </Badge>
+                )}
+                {data.all_categories.admin.count > 0 && (
+                  <Badge variant="outline" className="text-sm">
+                    Admin {data.all_categories.admin.pct_total.toFixed(1)}%
+                  </Badge>
+                )}
+                {data.all_categories.explore.count === 0 && 
+                 data.all_categories.release.count === 0 && 
+                 data.all_categories.admin.count === 0 && (
+                  <span className="text-sm text-muted-foreground">No other activity</span>
+                )}
+              </div>
             </div>
 
             {/* Top Collaborations */}

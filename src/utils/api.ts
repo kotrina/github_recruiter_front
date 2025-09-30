@@ -142,6 +142,22 @@ export interface ActivityRoles {
   build: ActivityRole;
   review: ActivityRole;
   feedback: ActivityRole;
+  roles_total: number;
+}
+
+export interface CategoryActivity {
+  count: number;
+  pct_total: number;
+}
+
+export interface AllCategories {
+  build: CategoryActivity;
+  review: CategoryActivity;
+  feedback: CategoryActivity;
+  explore: CategoryActivity;
+  release: CategoryActivity;
+  admin: CategoryActivity;
+  total_events: number;
 }
 
 export interface TopCollaboration {
@@ -159,6 +175,7 @@ export interface ActivityResponse {
   window_days: number;
   kpis: ActivityKPIs;
   roles: ActivityRoles;
+  all_categories: AllCategories;
   top_collabs: TopCollaboration[];
 }
 
