@@ -13,6 +13,9 @@ import {
   getLanguages,
   getCommunity,
   getActivity,
+  getAIAnalysis,
+  getCachedAIAnalysis,
+  setCachedAIAnalysis,
   addRecentSearch,
   getRecentSearches,
   loadApiConfig,
@@ -21,9 +24,11 @@ import {
   LanguagesResponse,
   CommunityResponse,
   ActivityResponse,
+  AIAnalysisResponse,
   ApiError,
 } from '@/utils/api';
 import { ActivitySection } from '@/components/ActivitySection';
+import { AIAnalysisSection } from '@/components/AIAnalysisSection';
 
 interface SearchResults {
   analyze: {
@@ -46,6 +51,11 @@ interface SearchResults {
     loading: boolean;
     error: Error | null;
   };
+  aiAnalysis: {
+    data: AIAnalysisResponse | null;
+    loading: boolean;
+    error: Error | null;
+  };
 }
 
 const Index = () => {
@@ -56,6 +66,7 @@ const Index = () => {
     languages: { data: null, loading: false, error: null },
     community: { data: null, loading: false, error: null },
     activity: { data: null, loading: false, error: null },
+    aiAnalysis: { data: null, loading: false, error: null },
   });
   const [currentUsername, setCurrentUsername] = useState<string>('');
   const [filters, setFilters] = useState<FilterOptions>({
@@ -96,6 +107,7 @@ const Index = () => {
       languages: { data: null, loading: false, error: null },
       community: { data: null, loading: false, error: null },
       activity: { data: null, loading: false, error: null },
+      aiAnalysis: { data: null, loading: false, error: null },
     });
   };
 
@@ -147,13 +159,16 @@ const Index = () => {
     // Reset results
     resetResults();
 
-    // Fetch all data in parallel
+    // Fetch core data in parallel
     await Promise.all([
       fetchAnalyze(username),
       fetchLanguages(username),
       fetchCommunity(username),
       fetchActivity(username),
     ]);
+
+    // Fetch AI analysis after core data (lower priority)
+    fetchAIAnalysis(username);
   };
 
   const handleRetryAnalyze = () => {
@@ -225,6 +240,51 @@ const Index = () => {
   const handleActivityDaysChange = (days: number) => {
     if (currentUsername) {
       fetchActivity(currentUsername, days);
+    }
+  };
+
+  const fetchAIAnalysis = async (username: string, useCache = true) => {
+    // Check cache first
+    if (useCache) {
+      const cached = getCachedAIAnalysis(username);
+      if (cached) {
+        setSearchResults(prev => ({
+          ...prev,
+          aiAnalysis: { data: cached, loading: false, error: null }
+        }));
+        // Background refresh
+        fetchAIAnalysisFromAPI(username);
+        return;
+      }
+    }
+
+    await fetchAIAnalysisFromAPI(username);
+  };
+
+  const fetchAIAnalysisFromAPI = async (username: string) => {
+    setSearchResults(prev => ({
+      ...prev,
+      aiAnalysis: { data: prev.aiAnalysis.data, loading: true, error: null }
+    }));
+
+    try {
+      const data = await getAIAnalysis(username);
+      setCachedAIAnalysis(username, data);
+      setSearchResults(prev => ({
+        ...prev,
+        aiAnalysis: { data, loading: false, error: null }
+      }));
+    } catch (error) {
+      setSearchResults(prev => ({
+        ...prev,
+        aiAnalysis: { data: null, loading: false, error: error as Error }
+      }));
+    }
+  };
+
+  const handleRetryAIAnalysis = () => {
+    if (currentUsername) {
+      fetchAIAnalysis(currentUsername, false);
     }
   };
 
@@ -349,6 +409,16 @@ const Index = () => {
           <ActivitySection 
             data={searchResults.activity.data}
             onDaysChange={handleActivityDaysChange}
+          />
+        )}
+
+        {/* AI Analysis Section - Full Width */}
+        {(searchResults.aiAnalysis.loading || searchResults.aiAnalysis.data || searchResults.aiAnalysis.error) && (
+          <AIAnalysisSection
+            data={searchResults.aiAnalysis.data!}
+            onRefresh={handleRetryAIAnalysis}
+            isLoading={searchResults.aiAnalysis.loading}
+            error={searchResults.aiAnalysis.error}
           />
         )}
       </main>

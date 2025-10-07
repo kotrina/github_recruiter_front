@@ -1,0 +1,204 @@
+import { useState, useEffect, useRef } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Info, RefreshCw, Copy, Check, ExternalLink } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorCard } from '@/components/ErrorCard';
+import { AIAnalysisResponse, getCachedAIAnalysis, setCachedAIAnalysis } from '@/utils/api';
+import ReactMarkdown from 'react-markdown';
+
+interface AIAnalysisSectionProps {
+  data: AIAnalysisResponse;
+  onRefresh: () => void;
+  isLoading?: boolean;
+  error?: Error | null;
+}
+
+export function AIAnalysisSection({ data, onRefresh, isLoading, error }: AIAnalysisSectionProps) {
+  const [copied, setCopied] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (data && sectionRef.current) {
+      sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [data]);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(data.analysis);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Ignore copy errors
+    }
+  };
+
+  if (error) {
+    return (
+      <section ref={sectionRef} className="py-8 px-4 border-t border-border">
+        <div className="container mx-auto max-w-7xl">
+          <ErrorCard 
+            error={error}
+            title="⚠️ AI analysis unavailable"
+            onRetry={onRefresh}
+          />
+        </div>
+      </section>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <section ref={sectionRef} className="py-8 px-4 border-t border-border">
+        <div className="container mx-auto max-w-7xl">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <CardTitle>AI Analysis</CardTitle>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-sm">
+                      <p className="text-sm">
+                        This section is generated automatically by an AI recruiter assistant.
+                        It summarizes the candidate's GitHub profile into recruiter-friendly insights — 
+                        highlighting their strengths, potential gaps, and suggested interview questions.
+                        Use it as a quick reading aid, not as a factual evaluation.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-4/6" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section ref={sectionRef} className="py-8 px-4 border-t border-border">
+      <div className="container mx-auto max-w-7xl">
+        <Card className="rounded-xl shadow-md">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CardTitle>AI Analysis</CardTitle>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-sm">
+                      <p className="text-sm">
+                        This section is generated automatically by an AI recruiter assistant.
+                        It summarizes the candidate's GitHub profile into recruiter-friendly insights — 
+                        highlighting their strengths, potential gaps, and suggested interview questions.
+                        Use it as a quick reading aid, not as a factual evaluation.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onRefresh}
+                className="h-8"
+              >
+                <RefreshCw className="h-3 w-3 mr-1" />
+                Refresh
+              </Button>
+            </div>
+            <div className="text-sm text-muted-foreground mt-2">
+              Generated by AI for{' '}
+              <a
+                href={data.github_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium hover:underline inline-flex items-center gap-1"
+              >
+                {data.username}
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
+          </CardHeader>
+
+          <CardContent className="relative">
+            <div className="prose prose-sm max-w-none dark:prose-invert max-h-[500px] overflow-y-auto pr-2">
+              <ReactMarkdown
+                components={{
+                  h1: ({ children }) => (
+                    <h1 className="text-xl font-bold mt-6 mb-3 first:mt-0">{children}</h1>
+                  ),
+                  h2: ({ children }) => (
+                    <h2 className="text-lg font-semibold mt-5 mb-2">{children}</h2>
+                  ),
+                  h3: ({ children }) => (
+                    <h3 className="text-base font-semibold mt-4 mb-2">{children}</h3>
+                  ),
+                  p: ({ children }) => (
+                    <p className="text-base leading-relaxed mb-3">{children}</p>
+                  ),
+                  ul: ({ children }) => (
+                    <ul className="list-disc list-inside space-y-1 mb-3">{children}</ul>
+                  ),
+                  ol: ({ children }) => (
+                    <ol className="list-decimal list-inside space-y-1 mb-3">{children}</ol>
+                  ),
+                  li: ({ children }) => (
+                    <li className="text-base leading-relaxed ml-4">{children}</li>
+                  ),
+                  strong: ({ children }) => (
+                    <strong className="font-semibold">{children}</strong>
+                  ),
+                  code: ({ children }) => (
+                    <code className="bg-muted px-1.5 py-0.5 rounded text-sm">{children}</code>
+                  ),
+                }}
+              >
+                {data.analysis}
+              </ReactMarkdown>
+            </div>
+            
+            <div className="absolute bottom-4 right-4">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCopy}
+                      className="h-8 w-8 p-0"
+                    >
+                      {copied ? (
+                        <Check className="h-3 w-3 text-success" />
+                      ) : (
+                        <Copy className="h-3 w-3" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">{copied ? 'Copied!' : 'Copy to clipboard'}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
+  );
+}

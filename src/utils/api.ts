@@ -179,6 +179,12 @@ export interface ActivityResponse {
   top_collabs: TopCollaboration[];
 }
 
+export interface AIAnalysisResponse {
+  username: string;
+  github_url: string;
+  analysis: string;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -342,4 +348,51 @@ export const getActivityDays = (): number => {
 
 export const setActivityDays = (days: number) => {
   localStorage.setItem('activityDays', days.toString());
+};
+
+export const getAIAnalysis = async (username: string): Promise<AIAnalysisResponse> => {
+  const baseUrl = API_CONFIG.baseUrl.endsWith('/') ? API_CONFIG.baseUrl.slice(0, -1) : API_CONFIG.baseUrl;
+  const url = `${baseUrl}/ai_analysis?profile=${encodeURIComponent(username)}`;
+  return fetchJson<AIAnalysisResponse>(url);
+};
+
+// AI Analysis cache helpers
+interface CachedAIAnalysis {
+  data: AIAnalysisResponse;
+  timestamp: number;
+}
+
+export const getCachedAIAnalysis = (username: string): AIAnalysisResponse | null => {
+  try {
+    const key = `aiAnalysis_${username}`;
+    const cached = localStorage.getItem(key);
+    if (!cached) return null;
+    
+    const parsed: CachedAIAnalysis = JSON.parse(cached);
+    const age = Date.now() - parsed.timestamp;
+    const twentyFourHours = 24 * 60 * 60 * 1000;
+    
+    if (age < twentyFourHours) {
+      return parsed.data;
+    }
+    
+    // Clear expired cache
+    localStorage.removeItem(key);
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+export const setCachedAIAnalysis = (username: string, data: AIAnalysisResponse) => {
+  try {
+    const key = `aiAnalysis_${username}`;
+    const cached: CachedAIAnalysis = {
+      data,
+      timestamp: Date.now(),
+    };
+    localStorage.setItem(key, JSON.stringify(cached));
+  } catch {
+    // Ignore cache errors
+  }
 };
