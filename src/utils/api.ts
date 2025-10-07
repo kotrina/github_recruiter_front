@@ -230,6 +230,17 @@ export async function fetchJson<T>(url: string): Promise<T> {
         }
         throw new ApiError('Invalid parameters sent to API. Please check your settings.', 422, 'VALIDATION_ERROR');
       }
+      if (response.status === 502 || response.status === 500) {
+        // Try to get detailed error message from backend
+        try {
+          const errorData = await response.json();
+          if (errorData.detail) {
+            throw new ApiError(errorData.detail, response.status, 'SERVER_ERROR');
+          }
+        } catch (jsonError) {
+          // If we can't parse the error, fall back to generic message
+        }
+      }
       throw new ApiError('Something went wrong while fetching data.', response.status);
     }
 
