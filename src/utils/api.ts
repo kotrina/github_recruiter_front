@@ -197,9 +197,9 @@ export class ApiError extends Error {
 }
 
 // Helper function
-export async function fetchJson<T>(url: string): Promise<T> {
+export async function fetchJson<T>(url: string, timeoutMs?: number): Promise<T> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs || API_CONFIG.timeout);
 
   try {
     const response = await fetch(url, {
@@ -364,7 +364,7 @@ export const setActivityDays = (days: number) => {
 export const getAIAnalysis = async (username: string): Promise<AIAnalysisResponse> => {
   const baseUrl = API_CONFIG.baseUrl.endsWith('/') ? API_CONFIG.baseUrl.slice(0, -1) : API_CONFIG.baseUrl;
   const url = `${baseUrl}/ai_analysis?profile=${encodeURIComponent(username)}`;
-  return fetchJson<AIAnalysisResponse>(url);
+  return fetchJson<AIAnalysisResponse>(url, 60000); // 60 seconds timeout for AI analysis
 };
 
 // AI Analysis cache helpers
