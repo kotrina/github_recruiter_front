@@ -1,6 +1,6 @@
 // Configuration
 export const API_CONFIG = {
-  baseUrl: 'https://github-recruiter.onrender.com',
+  baseUrl: 'https://github-recruiter-ten.vercel.app',
   timeout: 10000,
 };
 
