@@ -98,6 +98,7 @@ const Index = () => {
       fetchLanguages(currentUsername);
       fetchCommunity(currentUsername);
       fetchActivity(currentUsername);
+      fetchAIAnalysis(currentUsername);
     }
   }, [filters, currentUsername]);
 
