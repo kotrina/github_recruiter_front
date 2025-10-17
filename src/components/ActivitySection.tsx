@@ -140,18 +140,17 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
                   No public activity in the selected window.
                 </div>
               ) : (
-                <div className="flex items-end justify-around gap-2 sm:gap-4 h-64 px-2">
+                <div className="flex items-end justify-around gap-2 sm:gap-4 px-2" style={{ height: '16rem' }}>
                   <TooltipProvider>
                     {categories.map((category) => {
                       const categoryData = getCategoryData(category.name);
-                      const height = categoryData.pct_total > 0 ? categoryData.pct_total : 0;
-                      const barHeight = height > 0 ? `${height}%` : '2px';
+                      const heightPct = categoryData.pct_total > 0 ? categoryData.pct_total : 0;
                       
                       return (
                         <Tooltip key={category.name}>
                           <TooltipTrigger asChild>
                             <button
-                              className="flex flex-col items-center gap-2 flex-1 group"
+                              className="flex flex-col items-center gap-2 flex-1 group h-full"
                               aria-label={`${category.name}: ${categoryData.count} events, ${categoryData.pct_total.toFixed(1)}% of total`}
                             >
                               <div className="text-xs font-semibold min-h-[2.5rem] flex items-end">
@@ -164,15 +163,16 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
                                   </span>
                                 )}
                               </div>
-                              <div
-                                className="w-full rounded-md transition-all duration-300 hover:opacity-80"
-                                style={{
-                                  backgroundColor: category.color,
-                                  height: barHeight,
-                                  minHeight: height === 0 ? '2px' : '8px',
-                                  animation: 'grow 0.6s ease-out',
-                                }}
-                              />
+                              <div className="flex-1 w-full flex items-end">
+                                <div
+                                  className="w-full rounded-md transition-all duration-300 hover:opacity-80"
+                                  style={{
+                                    backgroundColor: category.color,
+                                    height: heightPct > 0 ? `${heightPct}%` : '2px',
+                                    animation: 'grow 0.6s ease-out',
+                                  }}
+                                />
+                              </div>
                               <div className="text-xs font-medium text-center">
                                 {category.name}
                               </div>
