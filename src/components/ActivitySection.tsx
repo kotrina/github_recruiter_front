@@ -1,10 +1,16 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Info, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ActivityResponse, getActivityDays, setActivityDays } from '@/utils/api';
 import { format } from 'date-fns';
+
+interface CategoryData {
+  name: string;
+  color: string;
+  description: string;
+}
 
 interface ActivitySectionProps {
   data: ActivityResponse;
@@ -35,35 +41,42 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
     }
   };
 
-  const rolesTotal = data.roles.roles_total;
+  const formatCount = (count: number): string => {
+    if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}k`;
+    }
+    return count.toString();
+  };
+
+  const categories: CategoryData[] = [
+    { name: 'Build', color: '#2188ff', description: 'Writes code & pushes commits (hands-on contribution).' },
+    { name: 'Review', color: '#2ea44f', description: 'Reviews pull requests or code (quality & collaboration).' },
+    { name: 'Feedback', color: '#9f7aea', description: 'Comments on PRs/issues (discussion, mentoring).' },
+    { name: 'Explore', color: '#9ca3af', description: 'Stars/forks other repos (curiosity, learning).' },
+    { name: 'Release', color: '#f59e0b', description: 'Publishes versions/tags (delivery cadence).' },
+    { name: 'Admin', color: '#ef4444', description: 'Maintains/merges/manages repos (project stewardship).' },
+  ];
+
+  const getCategoryData = (categoryName: string): { count: number; pct_total: number } => {
+    const key = categoryName.toLowerCase() as keyof Omit<typeof data.all_categories, 'total_events'>;
+    const categoryData = data.all_categories[key];
+    if (typeof categoryData === 'object' && 'count' in categoryData) {
+      return categoryData;
+    }
+    return { count: 0, pct_total: 0 };
+  };
+
+  const totalEvents = data.all_categories.total_events;
 
   return (
     <section className="py-8 px-4 border-t border-border">
       <div className="container mx-auto max-w-7xl">
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div>
                 <CardTitle>Activity</CardTitle>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-sm">
-                      <p className="text-sm">
-                        We group public GitHub events into collaboration roles:
-                        <br />
-                        <strong>Build</strong> (pushes & pull requests),{' '}
-                        <strong>Review</strong> (PR reviews & comments on PRs),{' '}
-                        <strong>Feedback</strong> (issues & comments on issues).
-                        <br />
-                        The chips below show other activity: <strong>Explore</strong> (stars & forks),{' '}
-                        <strong>Release</strong> (releases & tags), and <strong>Admin</strong> (maintenance/meta actions).
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <CardDescription>Last {data.window_days} days</CardDescription>
               </div>
 
               {/* Days Selector */}
@@ -83,7 +96,6 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
                 ))}
               </div>
             </div>
-            <CardDescription>Last {data.window_days} days</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">
@@ -91,19 +103,7 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card>
                 <CardHeader className="pb-3">
-                  <CardDescription className="flex items-center gap-1">
-                    Last active
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="h-3 w-3 text-muted-foreground cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="text-xs">Time since the most recent public event in the selected window</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </CardDescription>
+                  <CardDescription>Last active</CardDescription>
                   <div className="text-2xl font-bold">
                     {formatLastActive(data.kpis.last_active_days_ago)}
                   </div>
@@ -112,19 +112,7 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
 
               <Card>
                 <CardHeader className="pb-3">
-                  <CardDescription className="flex items-center gap-1">
-                    Active weeks (12w)
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="h-3 w-3 text-muted-foreground cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="text-xs">Number of weeks (last 12) with ≥1 event</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </CardDescription>
+                  <CardDescription>Active weeks (12w)</CardDescription>
                   <div className="text-2xl font-bold">
                     {data.kpis.active_weeks_12w}
                   </div>
@@ -133,19 +121,7 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
 
               <Card>
                 <CardHeader className="pb-3">
-                  <CardDescription className="flex items-center gap-1">
-                    External ratio
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="h-3 w-3 text-muted-foreground cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="text-xs">Share of events on repositories not owned by the candidate</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </CardDescription>
+                  <CardDescription>External ratio</CardDescription>
                   <div className="text-2xl font-bold">
                     {data.kpis.external_ratio_pct.toFixed(0)}% external
                   </div>
@@ -153,111 +129,84 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
               </Card>
             </div>
 
-            {/* Activity by Role */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium">Activity by Role</h3>
+            {/* Vertical Bar Chart */}
+            <div className="space-y-4">
+              <div className="text-xs text-muted-foreground text-center">
+                All activity — {formatCount(totalEvents)} events
+              </div>
               
-              {rolesTotal === 0 ? (
-                <div className="text-sm text-muted-foreground py-8 text-center border rounded-md">
-                  No code-collaboration activity in the selected window.
+              {totalEvents === 0 ? (
+                <div className="text-sm text-muted-foreground py-16 text-center border rounded-xl">
+                  No public activity in the selected window.
                 </div>
               ) : (
-                <>
-                  <div className="relative h-8 rounded-md overflow-hidden border">
-                    <TooltipProvider>
-                      {data.roles.build.count > 0 && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div
-                              className="absolute top-0 left-0 h-full bg-blue-500 hover:opacity-90 transition-opacity cursor-help"
-                              style={{ width: `${data.roles.build.pct}%` }}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="text-xs">Build: {data.roles.build.count} ({data.roles.build.pct.toFixed(1)}%)</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
+                <div className="flex items-end justify-around gap-2 sm:gap-4 h-64 px-2">
+                  <TooltipProvider>
+                    {categories.map((category) => {
+                      const categoryData = getCategoryData(category.name);
+                      const height = categoryData.pct_total > 0 ? categoryData.pct_total : 0;
+                      const barHeight = height > 0 ? `${height}%` : '2px';
                       
-                      {data.roles.review.count > 0 && (
-                        <Tooltip>
+                      return (
+                        <Tooltip key={category.name}>
                           <TooltipTrigger asChild>
-                            <div
-                              className="absolute top-0 h-full bg-green-500 hover:opacity-90 transition-opacity cursor-help"
-                              style={{ 
-                                left: `${data.roles.build.pct}%`,
-                                width: `${data.roles.review.pct}%` 
-                              }}
-                            />
+                            <button
+                              className="flex flex-col items-center gap-2 flex-1 group"
+                              aria-label={`${category.name}: ${categoryData.count} events, ${categoryData.pct_total.toFixed(1)}% of total`}
+                            >
+                              <div className="text-xs font-semibold min-h-[2.5rem] flex items-end">
+                                {categoryData.count > 0 && (
+                                  <span>
+                                    {formatCount(categoryData.count)}
+                                    <span className="text-muted-foreground ml-1">
+                                      ({categoryData.pct_total.toFixed(1)}%)
+                                    </span>
+                                  </span>
+                                )}
+                              </div>
+                              <div
+                                className="w-full rounded-md transition-all duration-300 hover:opacity-80"
+                                style={{
+                                  backgroundColor: category.color,
+                                  height: barHeight,
+                                  minHeight: height === 0 ? '2px' : '8px',
+                                  animation: 'grow 0.6s ease-out',
+                                }}
+                              />
+                              <div className="text-xs font-medium text-center">
+                                {category.name}
+                              </div>
+                            </button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p className="text-xs">Review: {data.roles.review.count} ({data.roles.review.pct.toFixed(1)}%)</p>
+                            <p className="text-xs">
+                              {category.name}: {categoryData.count} events ({categoryData.pct_total.toFixed(1)}%)
+                            </p>
                           </TooltipContent>
                         </Tooltip>
-                      )}
-                      
-                      {data.roles.feedback.count > 0 && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div
-                              className="absolute top-0 h-full bg-purple-500 hover:opacity-90 transition-opacity cursor-help"
-                              style={{ 
-                                left: `${data.roles.build.pct + data.roles.review.pct}%`,
-                                width: `${data.roles.feedback.pct}%` 
-                              }}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="text-xs">Feedback: {data.roles.feedback.count} ({data.roles.feedback.pct.toFixed(1)}%)</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
-                    </TooltipProvider>
-                  </div>
-
-                  {/* Legend */}
-                  <div className="flex gap-6 text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded bg-blue-500" />
-                      <span>Build: {data.roles.build.count} ({data.roles.build.pct.toFixed(1)}%)</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded bg-green-500" />
-                      <span>Review: {data.roles.review.count} ({data.roles.review.pct.toFixed(1)}%)</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded bg-purple-500" />
-                      <span>Feedback: {data.roles.feedback.count} ({data.roles.feedback.pct.toFixed(1)}%)</span>
-                    </div>
-                  </div>
-                </>
+                      );
+                    })}
+                  </TooltipProvider>
+                </div>
               )}
-            </div>
 
-            {/* Other Activity */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium">Other Activity</h3>
-              <div className="flex gap-3 flex-wrap">
-                {data.all_categories.explore.count > 0 && (
-                  <Badge variant="outline" className="text-sm">
-                    Explore {data.all_categories.explore.pct_total.toFixed(1)}%
-                  </Badge>
-                )}
-                {data.all_categories.release.count > 0 && (
-                  <Badge variant="outline" className="text-sm">
-                    Release {data.all_categories.release.pct_total.toFixed(1)}%
-                  </Badge>
-                )}
-                {data.all_categories.admin.count > 0 && (
-                  <Badge variant="outline" className="text-sm">
-                    Admin {data.all_categories.admin.pct_total.toFixed(1)}%
-                  </Badge>
-                )}
-                {data.all_categories.explore.count === 0 && 
-                 data.all_categories.release.count === 0 && 
-                 data.all_categories.admin.count === 0 && (
-                  <span className="text-sm text-muted-foreground">No other activity</span>
-                )}
+              {/* Explanatory Block - Always Visible */}
+              <div className="rounded-xl p-4 bg-muted/30">
+                <h4 className="text-sm font-semibold mb-3">What each bar means</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                  {categories.map((category) => (
+                    <div key={category.name} className="flex items-start gap-2">
+                      <div
+                        className="w-3 h-3 rounded-full mt-0.5 flex-shrink-0"
+                        style={{ backgroundColor: category.color }}
+                      />
+                      <div>
+                        <span className="font-medium">{category.name}</span>
+                        <span className="text-muted-foreground"> — {category.description}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 

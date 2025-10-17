@@ -88,10 +88,21 @@ export default {
             height: "0",
           },
         },
+        "grow": {
+          from: {
+            height: "0",
+            opacity: "0",
+          },
+          to: {
+            height: "100%",
+            opacity: "1",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "grow": "grow 0.6s ease-out",
       },
     },
   },
