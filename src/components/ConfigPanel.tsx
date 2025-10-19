@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { API_CONFIG, updateApiConfig } from '@/utils/api';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ConfigPanelProps {
   open: boolean;
@@ -20,20 +21,21 @@ interface ConfigPanelProps {
 export function ConfigPanel({ open, onOpenChange }: ConfigPanelProps) {
   const [apiUrl, setApiUrl] = useState(API_CONFIG.baseUrl);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleSave = () => {
     try {
       new URL(apiUrl); // Validate URL format
       updateApiConfig(apiUrl);
       toast({
-        title: 'Configuration saved',
-        description: 'API base URL has been updated successfully.',
+        title: t('config.saved'),
+        description: t('config.savedDesc'),
       });
       onOpenChange(false);
     } catch (error) {
       toast({
-        title: 'Invalid URL',
-        description: 'Please enter a valid URL.',
+        title: t('config.invalidUrl'),
+        description: t('config.invalidUrlDesc'),
         variant: 'destructive',
       });
     }
@@ -48,35 +50,35 @@ export function ConfigPanel({ open, onOpenChange }: ConfigPanelProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Configuration</DialogTitle>
+          <DialogTitle>{t('config.title')}</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4 pt-4">
           <div className="space-y-2">
-            <Label htmlFor="api-url">API Base URL</Label>
+            <Label htmlFor="api-url">{t('config.label')}</Label>
             <Input
               id="api-url"
               value={apiUrl}
               onChange={(e) => setApiUrl(e.target.value)}
-              placeholder="https://github-recruiter.onrender.com"
+              placeholder={t('config.placeholder')}
             />
             <p className="text-xs text-muted-foreground">
-              The base URL for the GitHub Repo Interpreter API.
+              {t('config.description')}
             </p>
           </div>
         </div>
 
         <div className="flex gap-2 pt-4">
           <Button variant="outline" onClick={handleReset}>
-            Reset to Default
+            {t('config.reset')}
           </Button>
           <div className="flex-1" />
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t('config.cancel')}
           </Button>
           <Button onClick={handleSave}>
             <Save className="h-4 w-4 mr-2" />
-            Save
+            {t('config.save')}
           </Button>
         </div>
       </DialogContent>

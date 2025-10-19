@@ -5,6 +5,7 @@ import { ExternalLink } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ActivityResponse, getActivityDays, setActivityDays } from '@/utils/api';
 import { format } from 'date-fns';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CategoryData {
   name: string;
@@ -19,6 +20,7 @@ interface ActivitySectionProps {
 
 export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
   const [selectedDays, setSelectedDays] = useState(getActivityDays());
+  const { t } = useLanguage();
 
   const handleDaysChange = (days: number) => {
     setSelectedDays(days);
@@ -27,10 +29,10 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
   };
 
   const formatLastActive = (daysAgo: number | null): string => {
-    if (daysAgo === null) return 'No recent public activity';
-    if (daysAgo === 0) return 'Today';
-    if (daysAgo === 1) return 'Yesterday';
-    return `${daysAgo} days ago`;
+    if (daysAgo === null) return t('activity.noActivity');
+    if (daysAgo === 0) return t('activity.today');
+    if (daysAgo === 1) return t('activity.yesterday');
+    return `${daysAgo} ${t('activity.daysAgo')}`;
   };
 
   const formatDate = (dateString: string): string => {
@@ -49,12 +51,12 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
   };
 
   const categories: CategoryData[] = [
-    { name: 'Build', color: '#2188ff', description: 'Writes code & pushes commits (hands-on contribution).' },
-    { name: 'Review', color: '#2ea44f', description: 'Reviews pull requests or code (quality & collaboration).' },
-    { name: 'Feedback', color: '#9f7aea', description: 'Comments on PRs/issues (discussion, mentoring).' },
-    { name: 'Explore', color: '#9ca3af', description: 'Stars/forks other repos (curiosity, learning).' },
-    { name: 'Release', color: '#f59e0b', description: 'Publishes versions/tags (delivery cadence).' },
-    { name: 'Admin', color: '#ef4444', description: 'Maintains/merges/manages repos (project stewardship).' },
+    { name: t('activity.build'), color: '#2188ff', description: t('activity.buildDesc') },
+    { name: t('activity.review'), color: '#2ea44f', description: t('activity.reviewDesc') },
+    { name: t('activity.feedback'), color: '#9f7aea', description: t('activity.feedbackDesc') },
+    { name: t('activity.explore'), color: '#9ca3af', description: t('activity.exploreDesc') },
+    { name: t('activity.release'), color: '#f59e0b', description: t('activity.releaseDesc') },
+    { name: t('activity.admin'), color: '#ef4444', description: t('activity.adminDesc') },
   ];
 
   const getCategoryData = (categoryName: string): { count: number; pct_total: number } => {
@@ -75,8 +77,8 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
           <CardHeader>
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div>
-                <CardTitle>Activity</CardTitle>
-                <CardDescription>Last {data.window_days} days</CardDescription>
+                <CardTitle>{t('activity.title')}</CardTitle>
+                <CardDescription>{t('activity.subtitle')} {data.window_days} {t('activity.days')}</CardDescription>
               </div>
 
               {/* Days Selector */}
@@ -103,7 +105,7 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card>
                 <CardHeader className="pb-3">
-                  <CardDescription>Last active</CardDescription>
+                  <CardDescription>{t('activity.lastActive')}</CardDescription>
                   <div className="text-2xl font-bold">
                     {formatLastActive(data.kpis.last_active_days_ago)}
                   </div>
@@ -112,7 +114,7 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
 
               <Card>
                 <CardHeader className="pb-3">
-                  <CardDescription>Active weeks (12w)</CardDescription>
+                  <CardDescription>{t('activity.activeWeeks')}</CardDescription>
                   <div className="text-2xl font-bold">
                     {data.kpis.active_weeks_12w}
                   </div>
@@ -121,9 +123,9 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
 
               <Card>
                 <CardHeader className="pb-3">
-                  <CardDescription>External ratio</CardDescription>
+                  <CardDescription>{t('activity.externalRatio')}</CardDescription>
                   <div className="text-2xl font-bold">
-                    {data.kpis.external_ratio_pct.toFixed(0)}% external
+                    {data.kpis.external_ratio_pct.toFixed(0)}% {t('activity.externalRatio')}
                   </div>
                 </CardHeader>
               </Card>
@@ -132,12 +134,12 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
             {/* Vertical Bar Chart */}
             <div className="space-y-4">
               <div className="text-xs text-muted-foreground text-center">
-                All activity — {formatCount(totalEvents)} events
+                {t('activity.allActivity')} — {formatCount(totalEvents)} {t('activity.events')}
               </div>
               
               {totalEvents === 0 ? (
                 <div className="text-sm text-muted-foreground py-16 text-center border rounded-xl">
-                  No public activity in the selected window.
+                  {t('activity.noActivity')}
                 </div>
               ) : (
                 <div className="flex items-end justify-around gap-2 sm:gap-4 px-2" style={{ height: '16rem' }}>
@@ -192,7 +194,7 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
 
               {/* Explanatory Block - Always Visible */}
               <div className="rounded-xl p-4 bg-muted/30">
-                <h4 className="text-sm font-semibold mb-3">What each bar means</h4>
+                <h4 className="text-sm font-semibold mb-3">{t('activity.whatMeans')}</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-sm">
                   {categories.map((category) => (
                     <div key={category.name} className="flex items-start gap-2">
@@ -212,11 +214,11 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
 
             {/* Top Collaborations */}
             <div className="space-y-3">
-              <h3 className="text-sm font-medium">Top collaborations (external)</h3>
+              <h3 className="text-sm font-medium">{t('activity.topCollabs')}</h3>
               
               {data.top_collabs.length === 0 ? (
                 <div className="text-sm text-muted-foreground py-4 text-center border rounded-md">
-                  No external collaborations found.
+                  {t('activity.noActivity')}
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -238,23 +240,23 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
                         <div className="flex gap-2">
                           {collab.prs > 0 && (
                             <Badge variant="secondary" className="text-xs">
-                              PRs {collab.prs}
+                              {t('activity.prs')} {collab.prs}
                             </Badge>
                           )}
                           {collab.reviews > 0 && (
                             <Badge variant="secondary" className="text-xs">
-                              Reviews {collab.reviews}
+                              {t('activity.reviews')} {collab.reviews}
                             </Badge>
                           )}
                           {collab.issues > 0 && (
                             <Badge variant="secondary" className="text-xs">
-                              Issues {collab.issues}
+                              {t('activity.issues')} {collab.issues}
                             </Badge>
                           )}
                         </div>
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        Last: {formatDate(collab.last)}
+                        {t('activity.last')}: {formatDate(collab.last)}
                       </div>
                     </div>
                   ))}

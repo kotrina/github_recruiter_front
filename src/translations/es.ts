@@ -1,0 +1,121 @@
+export default {
+  // Header
+  'header.title': 'Hermes',
+  'header.subtitle': 'Intérprete de Github',
+  'header.share': 'Compartir',
+  'header.noProfile': 'No hay perfil para compartir',
+  'header.searchFirst': 'Busca un perfil de GitHub primero.',
+  'header.linkCopied': '¡Enlace copiado!',
+  'header.linkDescription': 'El enlace del perfil se ha copiado al portapapeles.',
+  'header.copyFailed': 'Error al copiar',
+  'header.copyFailedDescription': 'No se pudo copiar el enlace al portapapeles.',
+  'header.settings': 'Abrir configuración',
+  
+  // Search
+  'search.title': 'Buscar Perfil de GitHub',
+  'search.placeholder': 'Ingresa el nombre de usuario de GitHub...',
+  'search.button': 'Analizar',
+  'search.analyzing': 'Analizando...',
+  
+  // User Profile
+  'profile.followers': 'seguidores',
+  'profile.following': 'siguiendo',
+  'profile.repos': 'repos públicos',
+  'profile.joinedOn': 'Se unió el',
+  'profile.company': 'Empresa',
+  'profile.location': 'Ubicación',
+  'profile.blog': 'Sitio web',
+  'profile.twitter': 'Twitter',
+  'profile.viewOnGithub': 'Ver en GitHub',
+  
+  // AI Analysis
+  'ai.title': 'Análisis IA',
+  'ai.subtitle': 'Análisis generado por IA',
+  'ai.analyzing': 'Analizando perfil con IA...',
+  
+  // Repositories
+  'repos.title': 'Repositorios Principales',
+  'repos.subtitle': 'Repositorios más populares',
+  'repos.stars': 'estrellas',
+  'repos.forks': 'forks',
+  'repos.language': 'Lenguaje',
+  'repos.updatedOn': 'Actualizado el',
+  
+  // Languages
+  'languages.title': 'Lenguajes de Programación',
+  'languages.subtitle': 'Distribución por lenguaje',
+  'languages.all': 'Todos',
+  'languages.top': 'Top',
+  
+  // Activity
+  'activity.title': 'Actividad',
+  'activity.subtitle': 'Últimos',
+  'activity.days': 'días',
+  'activity.lastActive': 'Última actividad',
+  'activity.today': 'Hoy',
+  'activity.yesterday': 'Ayer',
+  'activity.daysAgo': 'días atrás',
+  'activity.activeWeeks': 'Semanas activas (12s)',
+  'activity.externalRatio': 'externo',
+  'activity.allActivity': 'Toda la actividad',
+  'activity.events': 'eventos',
+  'activity.whatMeans': 'Qué significa cada barra',
+  'activity.build': 'Construcción',
+  'activity.buildDesc': 'Escribe código y sube commits (contribución práctica).',
+  'activity.review': 'Revisión',
+  'activity.reviewDesc': 'Revisa pull requests o código (calidad y colaboración).',
+  'activity.feedback': 'Retroalimentación',
+  'activity.feedbackDesc': 'Comenta en PRs/issues (discusión, mentoría).',
+  'activity.explore': 'Exploración',
+  'activity.exploreDesc': 'Da estrellas/forks a otros repos (curiosidad, aprendizaje).',
+  'activity.release': 'Publicación',
+  'activity.releaseDesc': 'Publica versiones/tags (cadencia de entrega).',
+  'activity.admin': 'Administración',
+  'activity.adminDesc': 'Mantiene/fusiona/gestiona repos (administración de proyectos).',
+  'activity.topCollabs': 'Principales colaboraciones (externas)',
+  'activity.prs': 'PRs',
+  'activity.reviews': 'Revisiones',
+  'activity.issues': 'Issues',
+  'activity.last': 'Última',
+  'activity.noActivity': 'No hay actividad pública en la ventana seleccionada.',
+  
+  // Community
+  'community.title': 'Impacto en la Comunidad',
+  'community.subtitle': 'Métricas de contribución y participación',
+  'community.contributions': 'Contribuciones Totales',
+  'community.contributionsDesc': 'Actividad combinada en todos los repos',
+  'community.openSource': 'Proyectos Open Source',
+  'community.openSourceDesc': 'Repositorios públicos en los que ha contribuido',
+  'community.pullRequests': 'Pull Requests',
+  'community.pullRequestsDesc': 'Contribuciones fusionadas',
+  'community.issues': 'Issues Participadas',
+  'community.issuesDesc': 'Discusiones activas e informes',
+  'community.loading': 'Cargando datos de comunidad...',
+  
+  // Config Panel
+  'config.title': 'Configuración de API',
+  'config.description': 'Configura la URL base para la API del analizador de GitHub.',
+  'config.label': 'URL Base de la API',
+  'config.placeholder': 'https://github-recruiter.onrender.com',
+  'config.reset': 'Restablecer',
+  'config.cancel': 'Cancelar',
+  'config.save': 'Guardar Cambios',
+  'config.invalidUrl': 'URL inválida',
+  'config.invalidUrlDesc': 'Por favor ingresa una URL válida.',
+  'config.saved': 'Configuración guardada',
+  'config.savedDesc': 'La configuración de la API se ha actualizado.',
+  'config.saveFailed': 'Error al guardar',
+  'config.saveFailedDesc': 'No se pudo guardar la configuración de la API.',
+  
+  // Loading
+  'loading.profile': 'Cargando perfil...',
+  'loading.repos': 'Cargando repositorios...',
+  'loading.languages': 'Cargando lenguajes...',
+  'loading.activity': 'Cargando actividad...',
+  'loading.community': 'Cargando datos de comunidad...',
+  
+  // Errors
+  'error.title': 'Error',
+  'error.tryAgain': 'Intentar de Nuevo',
+  'error.default': 'Algo salió mal al obtener los datos.',
+};

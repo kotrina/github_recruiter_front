@@ -1,7 +1,9 @@
 import { Settings, Share } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
+import { LanguageSelector } from './LanguageSelector';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface HeaderProps {
   onConfigOpen: () => void;
@@ -10,12 +12,13 @@ interface HeaderProps {
 
 export function Header({ onConfigOpen, currentUsername }: HeaderProps) {
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleShare = async () => {
     if (!currentUsername) {
       toast({
-        title: "No profile to share",
-        description: "Search for a GitHub profile first.",
+        title: t('header.noProfile'),
+        description: t('header.searchFirst'),
         variant: "destructive",
       });
       return;
@@ -26,13 +29,13 @@ export function Header({ onConfigOpen, currentUsername }: HeaderProps) {
     try {
       await navigator.clipboard.writeText(shareUrl);
       toast({
-        title: "Link copied!",
-        description: "Profile link has been copied to clipboard.",
+        title: t('header.linkCopied'),
+        description: t('header.linkDescription'),
       });
     } catch (err) {
       toast({
-        title: "Copy failed",
-        description: "Could not copy link to clipboard.",
+        title: t('header.copyFailed'),
+        description: t('header.copyFailedDescription'),
         variant:  "destructive",
       });
     }
@@ -45,8 +48,8 @@ export function Header({ onConfigOpen, currentUsername }: HeaderProps) {
             <img src="/lovable-uploads/a4e96b70-f092-4308-9382-794770be8b04.png" alt="Hermes Logo" className="h-10 w-10 object-contain" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-bold">Hermes</span>
-            <span className="text-xs text-muted-foreground leading-tight">Github Interpreter</span>
+            <span className="text-xl font-bold">{t('header.title')}</span>
+            <span className="text-xs text-muted-foreground leading-tight">{t('header.subtitle')}</span>
           </div>
         </div>
         
@@ -58,7 +61,7 @@ export function Header({ onConfigOpen, currentUsername }: HeaderProps) {
             className="h-9 px-3"
           >
             <Share className="h-[1.2rem] w-[1.2rem] mr-2" />
-            Share
+            {t('header.share')}
           </Button>
           <Button
             variant="ghost"
@@ -67,8 +70,9 @@ export function Header({ onConfigOpen, currentUsername }: HeaderProps) {
             className="h-9 w-9 p-0"
           >
             <Settings className="h-[1.2rem] w-[1.2rem]" />
-            <span className="sr-only">Open configuration</span>
+            <span className="sr-only">{t('header.settings')}</span>
           </Button>
+          <LanguageSelector />
           <ThemeToggle />
         </div>
       </div>

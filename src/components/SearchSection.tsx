@@ -3,6 +3,7 @@ import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SearchSectionProps {
   onSearch: (username: string) => void;
@@ -14,6 +15,7 @@ const EXAMPLE_USERS = ['torvalds', 'vercel', 'microsoft', 'facebook', 'google'];
 
 export function SearchSection({ onSearch, isLoading, recentSearches }: SearchSectionProps) {
   const [input, setInput] = useState('');
+  const { t } = useLanguage();
 
   const extractUsername = (input: string): string => {
     const githubUrlMatch = input.match(/^https?:\/\/github\.com\/([^\/]+)/);
@@ -40,10 +42,10 @@ export function SearchSection({ onSearch, isLoading, recentSearches }: SearchSec
     <section className="py-16 px-4">
       <div className="container mx-auto max-w-4xl text-center">
         <h1 className="text-4xl font-bold text-foreground mb-4">
-          Are you a recruiter and not sure how to interpret a GitHub repository?
+          {t('search.title')}
         </h1>
         <p className="text-xl text-muted-foreground mb-12">
-          When you see a repository on a CV, do you skip it? We'll help you read it.
+          {t('search.placeholder')}
         </p>
 
         <form onSubmit={handleSubmit} className="flex gap-2 max-w-2xl mx-auto mb-6">
@@ -52,7 +54,7 @@ export function SearchSection({ onSearch, isLoading, recentSearches }: SearchSec
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Paste a GitHub username or profile URL (e.g. torvalds or https://github.com/torvalds)"
+              placeholder={t('search.placeholder')}
               className="pl-10 h-12 text-base"
               disabled={isLoading}
             />
@@ -63,7 +65,7 @@ export function SearchSection({ onSearch, isLoading, recentSearches }: SearchSec
             disabled={!input.trim() || isLoading}
             className="h-12 px-6"
           >
-            {isLoading ? 'Analyzing...' : 'Analyze Profile'}
+            {isLoading ? t('search.analyzing') : t('search.button')}
           </Button>
         </form>
 
