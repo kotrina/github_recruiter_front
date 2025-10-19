@@ -12,8 +12,8 @@ export default {
   'header.settings': 'Open configuration',
   
   // Search
-  'search.title': 'Search GitHub Profile',
-  'search.placeholder': 'Enter GitHub username...',
+  'search.title': 'Are you a recruiter and not sure how to interpret a GitHub repository?',
+  'search.placeholder': 'When you see a repository on a CV, do you skip it? We'll help you read it.',
   'search.button': 'Analyze',
   'search.analyzing': 'Analyzing...',
   
