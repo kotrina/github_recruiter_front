@@ -8,7 +8,8 @@ import { format } from 'date-fns';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CategoryData {
-  name: string;
+  key: string; // English key for API
+  name: string; // Translated name for display
   color: string;
   description: string;
 }
@@ -51,16 +52,16 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
   };
 
   const categories: CategoryData[] = [
-    { name: t('activity.build'), color: '#2188ff', description: t('activity.buildDesc') },
-    { name: t('activity.review'), color: '#2ea44f', description: t('activity.reviewDesc') },
-    { name: t('activity.feedback'), color: '#9f7aea', description: t('activity.feedbackDesc') },
-    { name: t('activity.explore'), color: '#9ca3af', description: t('activity.exploreDesc') },
-    { name: t('activity.release'), color: '#f59e0b', description: t('activity.releaseDesc') },
-    { name: t('activity.admin'), color: '#ef4444', description: t('activity.adminDesc') },
+    { key: 'build', name: t('activity.build'), color: '#2188ff', description: t('activity.buildDesc') },
+    { key: 'review', name: t('activity.review'), color: '#2ea44f', description: t('activity.reviewDesc') },
+    { key: 'feedback', name: t('activity.feedback'), color: '#9f7aea', description: t('activity.feedbackDesc') },
+    { key: 'explore', name: t('activity.explore'), color: '#9ca3af', description: t('activity.exploreDesc') },
+    { key: 'release', name: t('activity.release'), color: '#f59e0b', description: t('activity.releaseDesc') },
+    { key: 'admin', name: t('activity.admin'), color: '#ef4444', description: t('activity.adminDesc') },
   ];
 
-  const getCategoryData = (categoryName: string): { count: number; pct_total: number } => {
-    const key = categoryName.toLowerCase() as keyof Omit<typeof data.all_categories, 'total_events'>;
+  const getCategoryData = (categoryKey: string): { count: number; pct_total: number } => {
+    const key = categoryKey as keyof Omit<typeof data.all_categories, 'total_events'>;
     const categoryData = data.all_categories[key];
     if (typeof categoryData === 'object' && 'count' in categoryData) {
       return categoryData;
@@ -145,7 +146,7 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
                 <div className="flex items-end justify-around gap-2 sm:gap-4 px-2" style={{ height: '16rem' }}>
                   <TooltipProvider>
                     {categories.map((category) => {
-                      const categoryData = getCategoryData(category.name);
+                      const categoryData = getCategoryData(category.key);
                       const heightPct = categoryData.pct_total > 0 ? categoryData.pct_total : 0;
                       
                       return (
