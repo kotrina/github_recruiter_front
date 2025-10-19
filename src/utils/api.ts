@@ -361,9 +361,10 @@ export const setActivityDays = (days: number) => {
   localStorage.setItem('activityDays', days.toString());
 };
 
-export const getAIAnalysis = async (username: string): Promise<AIAnalysisResponse> => {
+export const getAIAnalysis = async (username: string, language: 'en' | 'es' = 'en'): Promise<AIAnalysisResponse> => {
   const baseUrl = API_CONFIG.baseUrl.endsWith('/') ? API_CONFIG.baseUrl.slice(0, -1) : API_CONFIG.baseUrl;
-  const url = `${baseUrl}/ai_analysis?profile=${encodeURIComponent(username)}`;
+  const lang = language === 'es' ? 'ES' : 'EN';
+  const url = `${baseUrl}/ai_analysis?profile=${encodeURIComponent(username)}&lang=${lang}`;
   return fetchJson<AIAnalysisResponse>(url, 60000); // 60 seconds timeout for AI analysis
 };
 
@@ -373,9 +374,10 @@ interface CachedAIAnalysis {
   timestamp: number;
 }
 
-export const getCachedAIAnalysis = (username: string): AIAnalysisResponse | null => {
+export const getCachedAIAnalysis = (username: string, language: 'en' | 'es' = 'en'): AIAnalysisResponse | null => {
   try {
-    const key = `aiAnalysis_${username}`;
+    const lang = language === 'es' ? 'ES' : 'EN';
+    const key = `aiAnalysis_${username}_${lang}`;
     const cached = localStorage.getItem(key);
     if (!cached) return null;
     
@@ -395,9 +397,10 @@ export const getCachedAIAnalysis = (username: string): AIAnalysisResponse | null
   }
 };
 
-export const setCachedAIAnalysis = (username: string, data: AIAnalysisResponse) => {
+export const setCachedAIAnalysis = (username: string, data: AIAnalysisResponse, language: 'en' | 'es' = 'en') => {
   try {
-    const key = `aiAnalysis_${username}`;
+    const lang = language === 'es' ? 'ES' : 'EN';
+    const key = `aiAnalysis_${username}_${lang}`;
     const cached: CachedAIAnalysis = {
       data,
       timestamp: Date.now(),

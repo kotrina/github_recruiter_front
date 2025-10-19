@@ -8,6 +8,7 @@ import { CommunitySection } from '@/components/CommunitySection';
 import { ConfigPanel } from '@/components/ConfigPanel';
 import { ErrorCard } from '@/components/ErrorCard';
 import { LoadingCard } from '@/components/LoadingCard';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   analyzeProfile,
   getLanguages,
@@ -59,6 +60,7 @@ interface SearchResults {
 }
 
 const Index = () => {
+  const { language } = useLanguage();
   const [configOpen, setConfigOpen] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [searchResults, setSearchResults] = useState<SearchResults>({
@@ -101,6 +103,13 @@ const Index = () => {
       fetchAIAnalysis(currentUsername);
     }
   }, [filters, currentUsername]);
+
+  // Re-fetch AI analysis when language changes
+  useEffect(() => {
+    if (currentUsername) {
+      fetchAIAnalysis(currentUsername, false); // Don't use cache on language change
+    }
+  }, [language]);
 
   const resetResults = () => {
     setSearchResults({
@@ -247,7 +256,7 @@ const Index = () => {
   const fetchAIAnalysis = async (username: string, useCache = true) => {
     // Check cache first
     if (useCache) {
-      const cached = getCachedAIAnalysis(username);
+      const cached = getCachedAIAnalysis(username, language);
       if (cached) {
         setSearchResults(prev => ({
           ...prev,
@@ -269,8 +278,8 @@ const Index = () => {
     }));
 
     try {
-      const data = await getAIAnalysis(username);
-      setCachedAIAnalysis(username, data);
+      const data = await getAIAnalysis(username, language);
+      setCachedAIAnalysis(username, data, language);
       setSearchResults(prev => ({
         ...prev,
         aiAnalysis: { data, loading: false, error: null }
