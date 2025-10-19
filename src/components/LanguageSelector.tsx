@@ -1,4 +1,3 @@
-import { Languages } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -14,8 +13,8 @@ export function LanguageSelector() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
-          <Languages className="h-[1.2rem] w-[1.2rem]" />
+        <Button variant="ghost" size="sm" className="h-9 px-3 font-semibold">
+          {language.toUpperCase()}
           <span className="sr-only">Select language</span>
         </Button>
       </DropdownMenuTrigger>
