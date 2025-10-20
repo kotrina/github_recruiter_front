@@ -42,7 +42,7 @@ export function ConfigPanel({ open, onOpenChange }: ConfigPanelProps) {
   };
 
   const handleReset = () => {
-    const defaultUrl = 'https://github-recruiter.onrender.com';
+    const defaultUrl = 'https://github-recruiter-ten.vercel.app';
     setApiUrl(defaultUrl);
   };
 
