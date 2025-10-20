@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ActivityResponse, getActivityDays, setActivityDays } from '@/utils/api';
 import { format } from 'date-fns';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -144,52 +144,53 @@ export function ActivitySection({ data, onDaysChange }: ActivitySectionProps) {
                 </div>
               ) : (
                 <div className="flex items-end justify-around gap-2 sm:gap-4 px-2" style={{ height: '16rem' }}>
-                  <TooltipProvider>
-                    {categories.map((category) => {
-                      const categoryData = getCategoryData(category.key);
-                      const heightPct = categoryData.pct_total > 0 ? categoryData.pct_total : 0;
-                      
-                      return (
-                        <Tooltip key={category.name}>
-                          <TooltipTrigger asChild>
-                            <button
-                              className="flex flex-col items-center gap-2 flex-1 group h-full"
-                              aria-label={`${category.name}: ${categoryData.count} events, ${categoryData.pct_total.toFixed(1)}% of total`}
-                            >
-                              <div className="text-xs font-semibold min-h-[2.5rem] flex items-end">
-                                {categoryData.count > 0 && (
-                                  <span>
-                                    {formatCount(categoryData.count)}
-                                    <span className="text-muted-foreground ml-1">
-                                      ({categoryData.pct_total.toFixed(1)}%)
-                                    </span>
+                  {categories.map((category) => {
+                    const categoryData = getCategoryData(category.key);
+                    const heightPct = categoryData.pct_total > 0 ? categoryData.pct_total : 0;
+                    
+                    return (
+                      <Popover key={category.name}>
+                        <PopoverTrigger asChild>
+                          <button
+                            className="flex flex-col items-center gap-2 flex-1 group h-full"
+                            aria-label={`${category.name}: ${categoryData.count} events, ${categoryData.pct_total.toFixed(1)}% of total`}
+                          >
+                            <div className="text-xs font-semibold min-h-[2.5rem] flex items-end">
+                              {categoryData.count > 0 && (
+                                <span>
+                                  {formatCount(categoryData.count)}
+                                  <span className="text-muted-foreground ml-1">
+                                    ({categoryData.pct_total.toFixed(1)}%)
                                   </span>
-                                )}
-                              </div>
-                              <div className="flex-1 w-full flex items-end">
-                                <div
-                                  className="w-full rounded-md transition-all duration-300 hover:opacity-80"
-                                  style={{
-                                    backgroundColor: category.color,
-                                    height: heightPct > 0 ? `${heightPct}%` : '2px',
-                                    animation: 'grow 0.6s ease-out',
-                                  }}
-                                />
-                              </div>
-                              <div className="text-xs font-medium text-center">
-                                {category.name}
-                              </div>
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="text-xs">
-                              {category.name}: {categoryData.count} events ({categoryData.pct_total.toFixed(1)}%)
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      );
-                    })}
-                  </TooltipProvider>
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex-1 w-full flex items-end">
+                              <div
+                                className="w-full rounded-md transition-all duration-300 hover:opacity-80"
+                                style={{
+                                  backgroundColor: category.color,
+                                  height: heightPct > 0 ? `${heightPct}%` : '2px',
+                                  animation: 'grow 0.6s ease-out',
+                                }}
+                              />
+                            </div>
+                            <div className="text-xs font-medium text-center">
+                              {category.name}
+                            </div>
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-3">
+                          <p className="text-sm">
+                            <span className="font-medium">{category.name}</span>: {categoryData.count} {t('activity.events')} ({categoryData.pct_total.toFixed(1)}%)
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {category.description}
+                          </p>
+                        </PopoverContent>
+                      </Popover>
+                    );
+                  })}
                 </div>
               )}
 
