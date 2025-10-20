@@ -1,4 +1,4 @@
-import { Settings, Share } from 'lucide-react';
+import { Share } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { LanguageSelector } from './LanguageSelector';
 import { Button } from '@/components/ui/button';
@@ -6,11 +6,10 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface HeaderProps {
-  onConfigOpen: () => void;
   currentUsername?: string;
 }
 
-export function Header({ onConfigOpen, currentUsername }: HeaderProps) {
+export function Header({ currentUsername }: HeaderProps) {
   const { toast } = useToast();
   const { t } = useLanguage();
 
@@ -62,15 +61,6 @@ export function Header({ onConfigOpen, currentUsername }: HeaderProps) {
           >
             <Share className="h-[1.2rem] w-[1.2rem] mr-2" />
             {t('header.share')}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onConfigOpen}
-            className="h-9 w-9 p-0"
-          >
-            <Settings className="h-[1.2rem] w-[1.2rem]" />
-            <span className="sr-only">{t('header.settings')}</span>
           </Button>
           <LanguageSelector />
           <ThemeToggle />

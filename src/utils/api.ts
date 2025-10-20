@@ -1,19 +1,9 @@
+import { API_BASE_URL, API_TIMEOUT } from '@/config/api.config';
+
 // Configuration
 export const API_CONFIG = {
-  baseUrl: 'https://github-recruiter-ten.vercel.app',
-  timeout: 10000,
-};
-
-export const updateApiConfig = (newBaseUrl: string) => {
-  API_CONFIG.baseUrl = newBaseUrl;
-  localStorage.setItem('github-interpreter-api-url', newBaseUrl);
-};
-
-export const loadApiConfig = () => {
-  const savedUrl = localStorage.getItem('github-interpreter-api-url');
-  if (savedUrl) {
-    API_CONFIG.baseUrl = savedUrl;
-  }
+  baseUrl: API_BASE_URL,
+  timeout: API_TIMEOUT,
 };
 
 // Types

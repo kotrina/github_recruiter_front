@@ -5,7 +5,6 @@ import { UserProfile } from '@/components/UserProfile';
 import { LanguageChart } from '@/components/LanguageChart';
 import { LanguageFilters, FilterOptions } from '@/components/LanguageFilters';
 import { CommunitySection } from '@/components/CommunitySection';
-import { ConfigPanel } from '@/components/ConfigPanel';
 import { ErrorCard } from '@/components/ErrorCard';
 import { LoadingCard } from '@/components/LoadingCard';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -19,7 +18,6 @@ import {
   setCachedAIAnalysis,
   addRecentSearch,
   getRecentSearches,
-  loadApiConfig,
   getActivityDays,
   AnalyzeResponse,
   LanguagesResponse,
@@ -61,7 +59,6 @@ interface SearchResults {
 
 const Index = () => {
   const { language } = useLanguage();
-  const [configOpen, setConfigOpen] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [searchResults, setSearchResults] = useState<SearchResults>({
     analyze: { data: null, loading: false, error: null },
@@ -80,7 +77,6 @@ const Index = () => {
 
   // Load initial data and handle shared URLs
   useEffect(() => {
-    loadApiConfig();
     setRecentSearches(getRecentSearches());
     
     // Handle shared profile URLs
@@ -303,7 +299,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header onConfigOpen={() => setConfigOpen(true)} currentUsername={currentUsername} />
+      <Header currentUsername={currentUsername} />
       
       <main>
         <SearchSection 
@@ -432,11 +428,6 @@ const Index = () => {
           />
         )}
       </main>
-
-      <ConfigPanel 
-        open={configOpen} 
-        onOpenChange={setConfigOpen} 
-      />
     </div>
   );
 };

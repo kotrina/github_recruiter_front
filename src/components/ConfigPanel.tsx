@@ -9,7 +9,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { API_CONFIG, updateApiConfig } from '@/utils/api';
+import { API_CONFIG } from '@/utils/api';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -24,21 +24,11 @@ export function ConfigPanel({ open, onOpenChange }: ConfigPanelProps) {
   const { t } = useLanguage();
 
   const handleSave = () => {
-    try {
-      new URL(apiUrl); // Validate URL format
-      updateApiConfig(apiUrl);
-      toast({
-        title: t('config.saved'),
-        description: t('config.savedDesc'),
-      });
-      onOpenChange(false);
-    } catch (error) {
-      toast({
-        title: t('config.invalidUrl'),
-        description: t('config.invalidUrlDesc'),
-        variant: 'destructive',
-      });
-    }
+    toast({
+      title: t('config.saved'),
+      description: t('config.savedDesc'),
+    });
+    onOpenChange(false);
   };
 
   const handleReset = () => {
