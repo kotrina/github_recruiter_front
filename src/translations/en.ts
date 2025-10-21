@@ -3,6 +3,7 @@ export default {
   "header.title": "Hermes",
   "header.subtitle": "Github Interpreter",
   "header.share": "Share",
+  "header.export": "Export PDF",
   "header.noProfile": "No profile to share",
   "header.searchFirst": "Search for a GitHub profile first.",
   "header.linkCopied": "Link copied!",

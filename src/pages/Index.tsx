@@ -28,6 +28,9 @@ import {
 } from '@/utils/api';
 import { ActivitySection } from '@/components/ActivitySection';
 import { AIAnalysisSection } from '@/components/AIAnalysisSection';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { useToast } from '@/hooks/use-toast';
 
 interface SearchResults {
   analyze: {
@@ -59,6 +62,7 @@ interface SearchResults {
 
 const Index = () => {
   const { language } = useLanguage();
+  const { toast } = useToast();
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [searchResults, setSearchResults] = useState<SearchResults>({
     analyze: { data: null, loading: false, error: null },
@@ -154,6 +158,62 @@ const Index = () => {
         ...prev,
         languages: { data: null, loading: false, error: error as Error }
       }));
+    }
+  };
+
+  const handleExportPDF = async () => {
+    if (!currentUsername) return;
+
+    try {
+      toast({
+        title: 'Generando PDF...',
+        description: 'Por favor espera mientras se crea el documento',
+      });
+
+      const mainElement = document.querySelector('main');
+      if (!mainElement) return;
+
+      const canvas = await html2canvas(mainElement, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= 297; // A4 height in mm
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= 297;
+      }
+
+      pdf.save(`github-profile-${currentUsername}.pdf`);
+
+      toast({
+        title: 'PDF generado',
+        description: 'El archivo se ha descargado correctamente',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'No se pudo generar el PDF',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -299,7 +359,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header currentUsername={currentUsername} />
+      <Header currentUsername={currentUsername} onExportPDF={handleExportPDF} />
       
       <main>
         <SearchSection 

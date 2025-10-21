@@ -1,4 +1,4 @@
-import { Share } from 'lucide-react';
+import { Share, FileDown } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { LanguageSelector } from './LanguageSelector';
 import { Button } from '@/components/ui/button';
@@ -7,9 +7,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 interface HeaderProps {
   currentUsername?: string;
+  onExportPDF?: () => void;
 }
 
-export function Header({ currentUsername }: HeaderProps) {
+export function Header({ currentUsername, onExportPDF }: HeaderProps) {
   const { toast } = useToast();
   const { t } = useLanguage();
 
@@ -61,6 +62,16 @@ export function Header({ currentUsername }: HeaderProps) {
           >
             <Share className="h-[1.2rem] w-[1.2rem] mr-2" />
             {t('header.share')}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onExportPDF}
+            disabled={!currentUsername}
+            className="h-9 px-3"
+          >
+            <FileDown className="h-[1.2rem] w-[1.2rem] mr-2" />
+            {t('header.export')}
           </Button>
           <LanguageSelector />
           <ThemeToggle />
