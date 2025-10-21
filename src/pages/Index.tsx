@@ -159,6 +159,10 @@ const Index = () => {
     }
   };
 
+  const handleExportPDF = () => {
+    window.print();
+  };
+
   const handleSearch = async (username: string) => {
     setCurrentUsername(username);
     addRecentSearch(username);
@@ -301,7 +305,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header currentUsername={currentUsername} />
+      <Header currentUsername={currentUsername} onExportPDF={handleExportPDF} />
       
       <main>
         <SearchSection 
