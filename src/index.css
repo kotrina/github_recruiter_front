@@ -150,3 +150,32 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Print styles */
+@media print {
+  /* Remove scroll and show all content */
+  .prose {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Hide interactive elements during print */
+  button {
+    display: none !important;
+  }
+
+  /* Ensure proper page breaks */
+  section {
+    page-break-inside: avoid;
+  }
+
+  /* Optimize colors for print */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .card {
+    border: 1px solid #ddd !important;
+  }
+}
