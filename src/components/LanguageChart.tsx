@@ -134,47 +134,49 @@ export function LanguageChart({ data }: LanguageChartProps) {
           </CardTitle>
         </CardHeader>
       <CardContent>
-        <div className="h-64 mb-6">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={chartData}
-                cx="50%"
-                cy="50%"
-                innerRadius={40}
-                outerRadius={80}
-                paddingAngle={2}
-                dataKey="value"
-              >
-                {chartData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={getLanguageColor(entry.name, index)}
-                  />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+        <div className="flex flex-col md:flex-row gap-6 items-center">
+          <div className="h-64 w-full md:w-1/2">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={40}
+                  outerRadius={80}
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={getLanguageColor(entry.name, index)}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
 
-        <div className="space-y-2">
-          <h4 className="font-semibold text-sm">Top Languages:</h4>
-          <div className="grid gap-2">
-            {chartData.slice(0, 8).map((item, index) => (
-              <div key={item.name} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: getLanguageColor(item.name, index) }}
-                  />
-                  <span className="text-sm font-medium">{item.name}</span>
+          <div className="space-y-2 w-full md:w-1/2">
+            <h4 className="font-semibold text-sm">Top Languages:</h4>
+            <div className="grid gap-2">
+              {chartData.slice(0, 8).map((item, index) => (
+                <div key={item.name} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-3 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: getLanguageColor(item.name, index) }}
+                    />
+                    <span className="text-sm font-medium">{item.name}</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {item.percentage}% • {formatBytes(item.value)}
+                  </div>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  {item.percentage}% • {formatBytes(item.value)}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
