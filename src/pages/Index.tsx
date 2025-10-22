@@ -328,7 +328,7 @@ const Index = () => {
         {hasResults && (
           <section className="py-8 px-4">
             <div className="container mx-auto max-w-7xl">
-              <div className="grid lg:grid-cols-2 gap-8">
+              <div className="grid lg:grid-cols-2 gap-8 items-start">
                 {/* Left Column - User Profile & Repositories */}
                 <div className="space-y-6">
                   {searchResults.analyze.loading && (
