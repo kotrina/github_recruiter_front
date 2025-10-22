@@ -328,44 +328,40 @@ const Index = () => {
         {hasResults && (
           <section className="py-8 px-4">
             <div className="container mx-auto max-w-7xl">
-              <div className="grid lg:grid-cols-2 gap-8 items-start">
-                {/* Left Column - User Profile & Repositories */}
-                <div className="space-y-6">
-                  {searchResults.analyze.loading && (
-                    <LoadingCard title="Candidate Summary" type="profile" />
-                  )}
-                  
-                  {searchResults.analyze.error && (
-                    <ErrorCard 
-                      error={searchResults.analyze.error}
-                      title="Failed to load profile"
-                      onRetry={handleRetryAnalyze}
-                    />
-                  )}
-                  
-                  {searchResults.analyze.data && (
-                    <UserProfile user={searchResults.analyze.data.user} />
-                  )}
-                </div>
+              <div className="space-y-8 max-w-4xl mx-auto">
+                {/* User Profile */}
+                {searchResults.analyze.loading && (
+                  <LoadingCard title="Candidate Summary" type="profile" />
+                )}
+                
+                {searchResults.analyze.error && (
+                  <ErrorCard 
+                    error={searchResults.analyze.error}
+                    title="Failed to load profile"
+                    onRetry={handleRetryAnalyze}
+                  />
+                )}
+                
+                {searchResults.analyze.data && (
+                  <UserProfile user={searchResults.analyze.data.user} />
+                )}
 
-                {/* Right Column - Language Analysis */}
-                <div className="space-y-6">
-                  {searchResults.languages.loading && (
-                    <LoadingCard title="Language Mix (%)" type="chart" />
-                  )}
-                  
-                  {searchResults.languages.error && (
-                    <ErrorCard 
-                      error={searchResults.languages.error}
-                      title="Failed to load languages"
-                      onRetry={handleRetryLanguages}
-                    />
-                  )}
-                  
-                  {searchResults.languages.data && (
-                    <LanguageChart data={searchResults.languages.data} />
-                  )}
-                </div>
+                {/* Language Analysis */}
+                {searchResults.languages.loading && (
+                  <LoadingCard title="Language Mix (%)" type="chart" />
+                )}
+                
+                {searchResults.languages.error && (
+                  <ErrorCard 
+                    error={searchResults.languages.error}
+                    title="Failed to load languages"
+                    onRetry={handleRetryLanguages}
+                  />
+                )}
+                
+                {searchResults.languages.data && (
+                  <LanguageChart data={searchResults.languages.data} />
+                )}
               </div>
             </div>
           </section>
