@@ -12,8 +12,8 @@ export default {
   'header.export': 'Exportar PDF',
 
   // Search translations
-  'search.title': 'Buscar Perfil de GitHub',
-  'search.placeholder': 'Introduce el nombre de usuario de GitHub',
+  'search.title': '¿Eres recruiter y no tienes claro cómo interpretar un perfil de Github?',
+  'search.placeholder': '¿Cuándo ver un repositorio en un CV, lo ignoras? Estamos aquí para ayudarte',
   'search.analyzing': 'Analizando...',
   'search.button': 'Analizar Perfil',
 
