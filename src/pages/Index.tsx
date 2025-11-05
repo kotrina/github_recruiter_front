@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { SearchSection } from '@/components/SearchSection';
+import { Footer } from '@/components/Footer';
 import { UserProfile } from '@/components/UserProfile';
 import { LanguageChart } from '@/components/LanguageChart';
 import { LanguageFilters, FilterOptions } from '@/components/LanguageFilters';
@@ -430,6 +431,7 @@ const Index = () => {
           />
         )}
       </main>
+      <Footer />
     </div>
   );
 };
