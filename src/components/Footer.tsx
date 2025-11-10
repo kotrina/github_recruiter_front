@@ -13,6 +13,13 @@ export function Footer() {
           </Link>
           <span>•</span>
           <Link 
+            to="/terms" 
+            className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
+          >
+            Terms
+          </Link>
+          <span>•</span>
+          <Link 
             to="/legal" 
             className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
           >
